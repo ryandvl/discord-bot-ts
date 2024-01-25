@@ -1,14 +1,25 @@
 {
   "name": "discordbot-handler-ts",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Discord Bot handler in TypeScript with discord.js",
   "main": "index.js",
   "scripts": {
+    "dev": "ts-node index.ts",
+    "build": "tsc",
+    "start": "tsc && node dist/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "ryandvl"
+  },
   "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1"
+  },
   "devDependencies": {
+    "@types/node": "^20.11.6",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }
 }

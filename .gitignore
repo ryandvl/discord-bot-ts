@@ -1,5 +1,23 @@
-node_modules/
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
+# Production
+/dist
+
+# PackageLock
 package-lock.json
 
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Enviroment
 .env*
+.env*.local
+
+# Typescript
+*.tsbuildinfo

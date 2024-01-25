@@ -22,7 +22,7 @@ export interface CommandProps {
 }
 
 export default class CommandStructure {
-  client: DiscordClient | null;
+  client: DiscordClient;
   requirements: RequirementsProps;
   data: SlashCommandBuilder;
   constructor(client: DiscordClient) {

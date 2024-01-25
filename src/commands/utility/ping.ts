@@ -7,6 +7,8 @@ export default class Command extends CommandStructure {
   }
 
   async run({ interaction }: CommandProps["run"]) {
-    interaction.reply({ content: "?", ephemeral: true });
+    interaction.reply({
+      content: `this.client.startTime: ${this.client.startTime}`,
+    });
   }
 }

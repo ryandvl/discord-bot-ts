@@ -2,7 +2,7 @@
   "name": "discord-bot-ts",
   "version": "0.1.0",
   "description": "Discord Bot handler in TypeScript with discord.js",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "dev": "ts-node index.ts",
     "build": "tsc",
@@ -15,7 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.14.1",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "mongoose": "^8.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.11.6",

@@ -28,14 +28,14 @@ const COLORS: AnsiProps = {
 };
 
 const BACKGROUND: AnsiProps = {
-  BLACK: 40,
-  RED: 41,
-  GREEN: 42,
-  YELLOW: 43,
-  BLUE: 44,
-  MAGENTA: 45,
-  CYAN: 46,
-  WHITE: 47,
+  BACKGROUND_BLACK: 40,
+  BACKGROUND_RED: 41,
+  BACKGROUND_GREEN: 42,
+  BACKGROUND_YELLOW: 43,
+  BACKGROUND_BLUE: 44,
+  BACKGROUND_MAGENTA: 45,
+  BACKGROUND_CYAN: 46,
+  BACKGROUND_WHITE: 47,
 
   b0: 40,
   bc: 41,
@@ -48,12 +48,12 @@ const BACKGROUND: AnsiProps = {
 };
 
 const TEXT_STYLE: AnsiProps = {
-  BOLD: 1,
-  FAINT: 2,
-  ITALIC: 3,
-  UNDERLINED: 4,
-  FLASHING: 5,
-  REVERSE: 7,
+  TEXT_BOLD: 1,
+  TEXT_FAINT: 2,
+  TEXT_ITALIC: 3,
+  TEXT_UNDERLINED: 4,
+  TEXT_FLASHING: 5,
+  TEXT_REVERSE: 7,
 
   t1: 1,
   t2: 2,
@@ -70,15 +70,6 @@ function getAnsi(code: number) {
 function replaceColors(string: string) {
   let newString = string;
 
-  for (const key in COLORS) {
-    if (Object.prototype.hasOwnProperty.call(COLORS, key)) {
-      let code: number = COLORS[key];
-      let regex: RegExp = new RegExp(`&${key.toLowerCase()}`, "g");
-
-      newString = newString.replace(regex, getAnsi(code));
-    }
-  }
-
   for (const key in BACKGROUND) {
     if (Object.prototype.hasOwnProperty.call(BACKGROUND, key)) {
       let code: number = BACKGROUND[key];
@@ -91,6 +82,15 @@ function replaceColors(string: string) {
   for (const key in TEXT_STYLE) {
     if (Object.prototype.hasOwnProperty.call(TEXT_STYLE, key)) {
       let code: number = TEXT_STYLE[key];
+      let regex: RegExp = new RegExp(`&${key.toLowerCase()}`, "g");
+
+      newString = newString.replace(regex, getAnsi(code));
+    }
+  }
+
+  for (const key in COLORS) {
+    if (Object.prototype.hasOwnProperty.call(COLORS, key)) {
+      let code: number = COLORS[key];
       let regex: RegExp = new RegExp(`&${key.toLowerCase()}`, "g");
 
       newString = newString.replace(regex, getAnsi(code));

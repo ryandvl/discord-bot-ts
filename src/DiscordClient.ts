@@ -15,6 +15,7 @@ import config from "../config";
 import CommandStructure from "./controller/Command";
 import EventStructure from "./controller/Event";
 import Translation from "./controller/Translation";
+import DatabaseUtils from "./utils/Database";
 //#endregion
 
 /**
@@ -31,6 +32,8 @@ export default class DiscordClient extends Client {
 
   translation: Translation;
 
+  database: DatabaseUtils;
+
   startTime: number;
 
   constructor(options: ClientOptions) {
@@ -43,6 +46,8 @@ export default class DiscordClient extends Client {
     this.slashCommands = new Collection<string, CommandStructure>();
 
     this.translation = new Translation(this);
+
+    this.database = new DatabaseUtils();
 
     this.startTime = Date.now();
   }

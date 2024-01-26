@@ -5,8 +5,9 @@ import {
 } from "discord.js";
 import DiscordClient from "../DiscordClient";
 import Translator from "./Translator";
+import DatabaseUtils from "../utils/Database";
 
-interface RequirementsProps {
+export interface RequirementsProps {
   botDeveloper?: boolean;
   botAdmin?: boolean;
   guildPermissions?: Permissions[];
@@ -15,9 +16,15 @@ interface RequirementsProps {
   default?: boolean;
 }
 
+export interface ContextProps {
+  db: DatabaseUtils;
+  userdb: any;
+}
+
 export interface CommandProps {
   run: {
     interaction: ChatInputCommandInteraction;
+    ctx: ContextProps;
     t: Translator["translate"];
   };
 }
@@ -41,5 +48,5 @@ export default class CommandStructure {
     this.data = new SlashCommandBuilder();
   }
 
-  async run({ interaction, t }: CommandProps["run"]) {}
+  async run({ interaction, ctx, t }: CommandProps["run"]) {}
 }

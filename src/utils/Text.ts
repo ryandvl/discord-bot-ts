@@ -6,3 +6,7 @@ export function spaceString(string: string, space: number): string {
 
   return newString;
 }
+
+export function firstUpperCase(string: string) {
+  return string[0].toUpperCase() + string.slice(1);
+}

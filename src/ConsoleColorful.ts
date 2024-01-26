@@ -125,8 +125,8 @@ export function writeEventLine(
     replaceColors(
       `&t2&0[&r&0${dateTime}&t2&0] &t2&0|&r &t1&b${spaceString(
         type.toUpperCase(),
-        10
-      )}&r &t2&0|&r &t1&5${spaceString(eventName, 10)}&r &t2&0|&r &r${string}&r`
+        15
+      )}&r &t2&0|&r &t1&5${spaceString(eventName, 15)}&r &t2&0|&r &r${string}&r`
     )
   );
 

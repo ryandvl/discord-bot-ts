@@ -1,10 +1,10 @@
 import {
   ChatInputCommandInteraction,
-  CommandInteraction,
   Permissions,
   SlashCommandBuilder,
 } from "discord.js";
 import DiscordClient from "../DiscordClient";
+import Translator from "./Translator";
 
 interface RequirementsProps {
   botDeveloper?: boolean;
@@ -18,6 +18,7 @@ interface RequirementsProps {
 export interface CommandProps {
   run: {
     interaction: ChatInputCommandInteraction;
+    t: Translator["translate"];
   };
 }
 
@@ -40,5 +41,5 @@ export default class CommandStructure {
     this.data = new SlashCommandBuilder();
   }
 
-  async run({ interaction }: CommandProps["run"]) {}
+  async run({ interaction, t }: CommandProps["run"]) {}
 }

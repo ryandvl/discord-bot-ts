@@ -4,7 +4,7 @@
 
 > 🧪 **Project Stack**: [Node.js](https://nodejs.org/en), [MongoDB](https://www.mongodb.com/pt-br) and [TypeScript](https://www.typescriptlang.org)
 
-> ⚙️ **NPM Dependencies**: [discord.js](https://www.npmjs.com/package/discord.js), [typescript](https://www.npmjs.com/package/typescript), [ts-node](https://www.npmjs.com/package/ts-node) and [dotenv](https://www.npmjs.com/package/dotenv).
+> ⚙️ **NPM Dependencies**: [discord.js](https://www.npmjs.com/package/discord.js), [mongoose](https://www.npmjs.com/package/mongoose), [typescript](https://www.npmjs.com/package/typescript), [ts-node](https://www.npmjs.com/package/ts-node) and [dotenv](https://www.npmjs.com/package/dotenv).
 
 ## 🖥️ Creators
 > 🧑‍💻 **Developer**: @ryandvl
@@ -26,9 +26,10 @@
 npm install
 ```
 
-4. Create a `.env` file, and place your Bot Token.
+4. Create a `.env` file, and place your Bot Token and MongoDB URL
 ```
 TOKEN=...
+MONGO_URL=...
 ```
 
 ## How to start Bot?

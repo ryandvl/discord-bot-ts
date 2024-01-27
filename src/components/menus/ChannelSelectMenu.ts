@@ -3,11 +3,11 @@ import { ChannelSelectMenuBuilder, ChannelType } from "discord.js";
 export interface ChannelSelectMenuProps {
   id: string;
   placeholder: string;
-  minValues: number;
-  maxValues: number;
-  defaultChannels: string[];
-  channelsTypes: ChannelType[];
-  disabled: boolean;
+  minValues?: number;
+  maxValues?: number;
+  defaultChannels?: string[];
+  channelsTypes?: ChannelType[];
+  disabled?: boolean;
 }
 
 const ChannelSelectMenu = (options: ChannelSelectMenuProps) => {
@@ -18,15 +18,17 @@ const ChannelSelectMenu = (options: ChannelSelectMenuProps) => {
   if ("placeholder" in options)
     channelSelectMenu.setPlaceholder(options.placeholder);
 
-  if ("minValues" in options) channelSelectMenu.setMinValues(options.minValues);
+  if ("minValues" in options)
+    channelSelectMenu.setMinValues(options.minValues ?? 1);
 
-  if ("maxValues" in options) channelSelectMenu.setMaxValues(options.maxValues);
+  if ("maxValues" in options)
+    channelSelectMenu.setMaxValues(options.maxValues ?? 1);
 
   if ("defaultChannels" in options)
-    channelSelectMenu.setDefaultChannels(options.defaultChannels);
+    channelSelectMenu.setDefaultChannels(options.defaultChannels ?? []);
 
   if ("channelTypes" in options)
-    channelSelectMenu.setChannelTypes(options.channelsTypes);
+    channelSelectMenu.setChannelTypes(options.channelsTypes ?? []);
 
   if ("disabled" in options) channelSelectMenu.setDisabled(options.disabled);
 

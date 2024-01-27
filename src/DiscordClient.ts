@@ -80,7 +80,8 @@ export default class DiscordClient extends Client {
 
         command.data.setName(commandName);
         command.data.setDescription(
-          this.translation.translations["en-US"][commandName]?.description ??
+          this.translation.translations["en-US"]["commands"][commandName]
+            ?.description ??
             "Invalid Description, Please contact the Bot Developer."
         );
 
@@ -96,7 +97,6 @@ export default class DiscordClient extends Client {
       "bot",
       "commands"
     );
-    await this.registrySlashCommands();
 
     return true;
   }
@@ -152,12 +152,13 @@ export default class DiscordClient extends Client {
 
   /**
    * Start all necessary functions to initialize the Bot
-   * @returns {boolean}
+   * @returns {Promise<boolean>}
    */
-  start(): boolean {
-    this.login(process.env.TOKEN);
-    this.loadEvents();
-    this.loadCommands();
+  async start(): Promise<boolean> {
+    await this.translation.getLocales();
+    await this.login(process.env.TOKEN);
+    await this.loadEvents();
+    await this.loadCommands();
 
     return true;
   }

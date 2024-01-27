@@ -7,10 +7,10 @@ import {
 export interface StringSelectMenuProps {
   id: string;
   placeholder: string;
-  minValues: number;
-  maxValues: number;
+  minValues?: number;
+  maxValues?: number;
   options: SelectMenuComponentOptionData[];
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const StringSelectMenu = (options: StringSelectMenuProps) => {
@@ -21,9 +21,11 @@ const StringSelectMenu = (options: StringSelectMenuProps) => {
   if ("placeholder" in options)
     stringSelectMenu.setPlaceholder(options.placeholder);
 
-  if ("minValues" in options) stringSelectMenu.setMinValues(options.minValues);
+  if ("minValues" in options)
+    stringSelectMenu.setMinValues(options.minValues ?? 1);
 
-  if ("maxValues" in options) stringSelectMenu.setMaxValues(options.maxValues);
+  if ("maxValues" in options)
+    stringSelectMenu.setMaxValues(options.maxValues ?? 1);
 
   for (var option of options.options) {
     const stringSelectMenuOptionBuilder = new StringSelectMenuOptionBuilder(

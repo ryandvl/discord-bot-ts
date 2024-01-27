@@ -1,7 +1,23 @@
-import { ActionRowBuilder, AnyComponentBuilder } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ChannelSelectMenuBuilder,
+  MentionableSelectMenuBuilder,
+  RoleSelectMenuBuilder,
+  StringSelectMenuBuilder,
+  UserSelectMenuBuilder,
+} from "discord.js";
 
-const ActionRow = (components: Array<AnyComponentBuilder>) => {
-  const actionRow = new ActionRowBuilder();
+export type Builders =
+  | ButtonBuilder
+  | ChannelSelectMenuBuilder
+  | MentionableSelectMenuBuilder
+  | RoleSelectMenuBuilder
+  | StringSelectMenuBuilder
+  | UserSelectMenuBuilder;
+
+const ActionRow = (components: Array<Builders>): ActionRowBuilder<Builders> => {
+  const actionRow = new ActionRowBuilder<Builders>();
 
   actionRow.setComponents(components);
 

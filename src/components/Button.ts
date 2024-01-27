@@ -9,11 +9,11 @@ export interface ButtonStyleProps {
 }
 
 export interface ButtonProps {
-  emoji: ComponentEmojiResolvable;
+  emoji?: ComponentEmojiResolvable;
   label: string;
-  style: string;
+  style?: string;
   id: string;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const buttonStyles: ButtonStyleProps = {
@@ -27,18 +27,20 @@ const buttonStyles: ButtonStyleProps = {
 const Button = (options: ButtonProps) => {
   const button = new ButtonBuilder();
 
-  if ("emoji" in options) button.setEmoji(options.emoji);
+  if ("emoji" in options)
+    button.setEmoji(options.emoji as ComponentEmojiResolvable);
 
   if ("label" in options) button.setLabel(options.label);
 
-  if (options.style && options.style.toUpperCase() !== "LINK")
-    button.setCustomId(options.id);
+  if (options.style?.toUpperCase() !== "LINK") button.setCustomId(options.id);
   else button.setURL(options.id);
 
   if ("style" in options)
-    options.style.toUpperCase() == "LINK"
+    options.style?.toUpperCase() == "LINK"
       ? button.setStyle(ButtonStyle.Link)
-      : button.setStyle(buttonStyles[options.style] ?? ButtonStyle.Danger);
+      : button.setStyle(
+          buttonStyles[options.style as string] ?? ButtonStyle.Danger
+        );
   else button.setStyle(ButtonStyle.Primary);
 
   if ("disabled" in options) button.setDisabled(options.disabled);

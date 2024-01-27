@@ -7,13 +7,13 @@ import {
 export interface MentionableSelectMenuProps {
   id: string;
   placeholder: string;
-  minValues: number;
-  maxValues: number;
-  defaultValues: Array<
+  minValues?: number;
+  maxValues?: number;
+  defaultValues?: Array<
     | APISelectMenuDefaultValue<SelectMenuDefaultValueType.Role>
     | APISelectMenuDefaultValue<SelectMenuDefaultValueType.User>
   >;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const MentionableSelectMenu = (options: MentionableSelectMenuProps) => {
@@ -25,13 +25,13 @@ const MentionableSelectMenu = (options: MentionableSelectMenuProps) => {
     mentionableSelectMenu.setPlaceholder(options.placeholder);
 
   if ("minValues" in options)
-    mentionableSelectMenu.setMinValues(options.minValues);
+    mentionableSelectMenu.setMinValues(options.minValues ?? 1);
 
   if ("maxValues" in options)
-    mentionableSelectMenu.setMaxValues(options.maxValues);
+    mentionableSelectMenu.setMaxValues(options.maxValues ?? 1);
 
   if ("defaultValues" in options)
-    mentionableSelectMenu.setDefaultValues(options.defaultValues);
+    mentionableSelectMenu.setDefaultValues(options.defaultValues ?? []);
 
   if ("disabled" in options)
     mentionableSelectMenu.setDisabled(options.disabled);

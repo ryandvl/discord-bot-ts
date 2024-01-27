@@ -43,18 +43,18 @@ export default class Translator {
 
     let translation: string = file as unknown as string;
 
-    if (Object.keys(replaceParams).length)
-      translation = this.setPlaceholder(translation, {
-        holders: ["{", "}"],
-        places: replaceParams,
-      });
-    translation = this.defaultPlaceholders(translation);
+    translation = this.setPlaceholders(translation, replaceParams);
 
     return translation;
   };
 
-  defaultPlaceholders(string: string) {
+  setPlaceholders(string: string, replaceParams: any = {}) {
     let translation: string = string;
+
+    translation = this.setPlaceholder(translation, {
+      holders: ["%", "%"],
+      places: this.translation.emojis,
+    });
 
     translation = this.setPlaceholder(translation, {
       holders: ["%", ""],
@@ -64,18 +64,14 @@ export default class Translator {
     translation = this.setPlaceholder(translation, {
       holders: ["{", "}"],
       places: {
-        author: this.interaction.user,
+        ...replaceParams,
+        author: this.interaction.user.toString(),
         author_username: this.interaction.user.username,
         author_tag: this.interaction.user.tag,
         author_id: this.interaction.user.id,
         guild: this.interaction?.guild?.name,
         guild_id: this.interaction?.guild?.id,
       },
-    });
-
-    translation = this.setPlaceholder(translation, {
-      holders: ["%", "%"],
-      places: this.translation.emojis,
     });
 
     return translation;

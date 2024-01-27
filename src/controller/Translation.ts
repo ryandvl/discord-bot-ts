@@ -6,7 +6,7 @@ import CommandStructure from "./Command";
 import { writeEventLine } from "../ConsoleColorful";
 import DiscordClient from "../DiscordClient";
 
-export const GUILD_EMOJIS = [];
+export const GUILD_EMOJIS = ["1198537913999302758"];
 export const SEPARATORS = {
   bar: " **|** ",
   double_arrow: " **»** ",
@@ -39,9 +39,6 @@ export default class Translation {
     this.translations = {};
 
     this.emojis = {};
-
-    this.getLocales();
-    this.getEmojis();
   }
 
   getEmojis() {
@@ -60,14 +57,14 @@ export default class Translation {
     for (var locale of this.locales) {
       command.data.setNameLocalization(
         locale,
-        this.translations[locale]?.[command.data.name]?.name ??
+        this.translations[locale]?.commands?.[command.data.name]?.name ??
           command.data.name
       );
 
       command.data.setDescriptionLocalization(
         locale,
-        this.translations[locale]?.[command.data.name]?.description ??
-          "Invalid Description, Please contact the Bot Developer."
+        this.translations[locale]?.commands?.[command.data.name]?.description ??
+          "Invalid Locale Description, Please contact the Bot Developer."
       );
     }
   }

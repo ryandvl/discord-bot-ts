@@ -1,6 +1,6 @@
 import {
   ChatInputCommandInteraction,
-  Permissions,
+  PermissionsString,
   SlashCommandBuilder,
 } from "discord.js";
 import DiscordClient from "../DiscordClient";
@@ -10,7 +10,8 @@ import DatabaseUtils from "../utils/Database";
 export interface RequirementsProps {
   botDeveloper?: boolean;
   botAdmin?: boolean;
-  guildPermissions?: Permissions[];
+  guildPermissions?: PermissionsString[];
+  memberPermissions?: PermissionsString[];
   premium?: boolean;
   server_boost?: boolean;
   default?: boolean;

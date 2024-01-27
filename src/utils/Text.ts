@@ -10,3 +10,7 @@ export function spaceString(string: string, space: number): string {
 export function firstUpperCase(string: string) {
   return string[0].toUpperCase() + string.slice(1);
 }
+
+export function stringFormatter(...args: string[]) {
+  return args.join("\n");
+}

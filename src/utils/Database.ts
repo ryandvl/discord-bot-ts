@@ -13,6 +13,8 @@ export default class DatabaseUtils {
   models: ModelsProps;
   modelsOptions: ModelsOptionsProps;
 
+  startTime: number;
+
   constructor() {
     this.database = null;
 
@@ -22,6 +24,8 @@ export default class DatabaseUtils {
     this.modelsOptions = this.manager.modelsOptions;
 
     this.connect();
+
+    this.startTime = Date.now();
   }
 
   async connect() {
@@ -41,6 +45,14 @@ export default class DatabaseUtils {
         );
         console.error(error);
       });
+  }
+
+  async getPing(id: string) {
+    let startTime = Date.now();
+
+    await this.get(1, id);
+
+    return Date.now() - startTime;
   }
 
   private getModelOption(type: type) {

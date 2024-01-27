@@ -6,12 +6,12 @@ import { basename } from "path";
 export const modelOption: ModelsOptionsProps[0] = {
   name: basename(__filename).split(".")[0],
 
-  types: [1, "users"],
+  types: [2, "guilds"],
   default: (content: content) => ({
     _id: content.id,
   }),
   checkCallback: function (content: content): boolean {
-    if (content.bot) return false;
+    if (!content.guild) return false;
     return true;
   },
 };

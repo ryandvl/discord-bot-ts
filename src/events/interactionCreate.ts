@@ -16,12 +16,48 @@ export default class Event extends EventStructure {
       db: this.client.database,
     };
 
-    const translator = new Translator(
-        this.client,
-        interaction,
-        ctx.userdb.language
-      ),
+    const locale = this.client.translation.locales.includes(interaction.locale)
+        ? interaction.locale
+        : "en-US",
+      translator = new Translator(this.client, interaction, locale),
       t = translator.translate;
+
+    var required = {
+      type: new String(),
+      permissions: new Array(),
+    };
+
+    for (var guildPermission of command.requirements.guildPermissions ?? [])
+      if (!interaction.appPermissions?.has(guildPermission)) {
+        var permissionTranslated =
+          this.client.translation.translations[locale]["permissions"][
+            guildPermission
+          ];
+
+        required.type = "bot";
+        required.permissions.push(permissionTranslated ?? guildPermission);
+      }
+
+    for (var memberPermission of command.requirements.memberPermissions ?? [])
+      if (!interaction.memberPermissions?.has(memberPermission)) {
+        var permissionTranslated =
+          this.client.translation.translations[locale]["permissions"][
+            memberPermission
+          ];
+
+        required.type = "member";
+        required.permissions.push(permissionTranslated ?? memberPermission);
+      }
+
+    if (required.permissions.length && required.type)
+      return await interaction.reply({
+        content: t(`permissions:${required.type}_no_permission`, {
+          permissions: required.permissions
+            .map((permission) => `\`${permission}\``)
+            .join(", "),
+        }),
+        ephemeral: true,
+      });
 
     try {
       command.run({ interaction, ctx, t });

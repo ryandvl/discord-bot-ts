@@ -49,22 +49,21 @@ export const optionsType: OptionsTypeStringProps = {
 };
 
 export interface OptionsTypeFunctionProps {
-  [key: string]: Function;
+  [key: string]: string;
 }
 
 export const optionsFunctions: OptionsTypeFunctionProps = {
-  sub_command: (builder: SlashCommandBuilder) => builder.addSubcommand,
-  sub_command_group: (builder: SlashCommandBuilder) =>
-    builder.addSubcommandGroup,
-  string: (builder: SlashCommandBuilder) => builder.addStringOption,
-  integer: (builder: SlashCommandBuilder) => builder.addIntegerOption,
-  boolean: (builder: SlashCommandBuilder) => builder.addBooleanOption,
-  user: (builder: SlashCommandBuilder) => builder.addUserOption,
-  channel: (builder: SlashCommandBuilder) => builder.addChannelOption,
-  role: (builder: SlashCommandBuilder) => builder.addRoleOption,
-  mentionable: (builder: SlashCommandBuilder) => builder.addMentionableOption,
-  number: (builder: SlashCommandBuilder) => builder.addNumberOption,
-  attachment: (builder: SlashCommandBuilder) => builder.addAttachmentOption,
+  sub_command: "builder.addSubcommand",
+  sub_command_group: "builder.addSubcommandGroup",
+  string: "addStringOption",
+  integer: "builder.addIntegerOption",
+  boolean: "builder.addBooleanOption",
+  user: "builder.addUserOption",
+  channel: "builder.addChannelOption",
+  role: "builder.addRoleOption",
+  mentionable: "builder.addMentionableOption",
+  number: "builder.addNumberOption",
+  attachment: "builder.addAttachmentOption",
 };
 
 export interface ContextProps {

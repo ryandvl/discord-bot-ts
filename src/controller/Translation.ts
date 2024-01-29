@@ -104,87 +104,25 @@ export default class Translation {
           : "Invalid Locale Description, Please contact the Bot Developer."
       );
       //#endregion
-
-      // const optionHandler = (
-      //   option: OptionsProps,
-      //   data: any,
-      //   translationOption: any,
-      //   enTranslationOption: any
-      // ) => {
-      //   let optionType = option.type;
-
-      //   data.setName(option.name);
-      //   data.setDescription(enTranslationOption.description);
-
-      //   data.setNameLocalization(
-      //     locale,
-      //     translationOption?.name ?? option.name
-      //   );
-
-      //   data.setDescriptionLocalization(
-      //     locale,
-      //     translationOption?.description ??
-      //       "Invalid Description, Please contact the Bot Developer."
-      //   );
-
-      //   var optionJSON = {
-      //     ...option,
-      //     description: translationOption.description,
-      //   };
-
-      //   switch (optionType) {
-      //     case "sub_command_group":
-      //       let i = 0;
-      //       for (var groupOption of option.options ?? []) {
-      //         optionHandler(
-      //           groupOption,
-      //           command.options[i],
-      //           translationOption.options[groupOption.name],
-      //           enTranslationOption.options[groupOption.name]
-      //         );
-      //         i++;
-      //       }
-
-      //       break;
-      //     case "sub_command":
-      //       // data.addSubcommand({ ...option, description: translationOption });
-      //       break;
-
-      //     case "string":
-      //       break;
-      //   }
-      // };
-
-      // for (var option of command.options)
-      //   optionHandler(
-      //     option,
-      //     command.data,
-      //     translation.options[option.name],
-      //     this.translations["en-US"]?.["commands"]?.[command.data.name]
-      //       ?.options[option.name]
-      //   );
     }
   }
 
   setCommandOptionsTranslations(
-    command: CommandStructure,
+    commandName: string,
     option: OptionsProps,
     optionBuilder: any,
     translatePath: string[]
   ) {
-    for (var locale of this.locales) {
-      var translation =
-          this.translations[locale]["commands"][command.data.name],
-        enTranslation =
-          this.translations["en-US"]["commands"][command.data.name];
+    optionBuilder.setName(option.name.toString());
 
-      console.log(translatePath, enTranslation);
+    for (var locale of this.locales) {
+      var translation = this.translations[locale]["commands"][commandName],
+        enTranslation = this.translations["en-US"]["commands"][commandName];
+
       for (var pathString of translatePath) {
         translation = translation[pathString];
         enTranslation = enTranslation[pathString];
       }
-
-      optionBuilder.setName(option.name);
 
       optionBuilder.setDescription(
         enTranslation.options[option.name].description ??
@@ -195,6 +133,7 @@ export default class Translation {
         locale,
         translation.options[option.name].name
       );
+
       optionBuilder.setDescriptionLocalization(
         locale,
         translation.options[option.name].description

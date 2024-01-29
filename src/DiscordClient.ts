@@ -4,6 +4,7 @@ import {
   Client,
   ClientOptions,
   Collection,
+  SharedSlashCommandOptions,
   SlashCommandBuilder,
   SlashCommandStringOption,
   SlashCommandSubcommandBuilder,
@@ -86,55 +87,162 @@ export default class DiscordClient extends Client {
 
         command.data.setName(commandName);
 
-        const findOptions = (
+        const findOptions = async (
           options: OptionsProps[] = [],
-          dataOptions: SlashCommandSubcommandBuilder | SlashCommandBuilder,
+          dataOptions: any,
           lastTranslationPath: string[] = []
         ) => {
           for (var option of options) {
-            var functiona = optionsFunctions[option.type](dataOptions);
-            var subCommandGroup = dataOptions.addStringOption(
-              (_: SlashCommandStringOption) =>
-                _.setName("ata").setDescription("test").setRequired(true)
-            );
+            switch (option.type) {
+              case "sub_command_group":
+                dataOptions.addSubcommandGroup((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
 
-            this.translation.setCommandOptionsTranslations(
-              command,
-              option,
-              subCommandGroup,
-              option.type == "sub_command_group"
-                ? [...lastTranslationPath, "options", option.name]
-                : []
-            );
+                  findOptions(option.options, object, lastTranslationPath);
 
-            // if (option.type == "sub_command_group") {
-            //   for (var groupOption of option.options ?? []) {
-            //     var subCommand: SlashCommandSubcommandBuilder =
-            //         subCommandGroup.addSubcommand(
-            //           (_: SlashCommandSubcommandBuilder) => _
-            //         ),
-            //       translatePath = [
-            //         ...lastTranslationPath,
-            //         "options",
-            //         option.name,
-            //         "options",
-            //         groupOption.name,
-            //       ];
+                  return object;
+                });
+                break;
 
-            //     this.translation.setCommandOptionsTranslations(
-            //       command,
-            //       groupOption,
-            //       subCommand,
-            //       translatePath
-            //     );
+              case "sub_command":
+                dataOptions.addSubcommand((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
 
-            //     findOptions(groupOption.options, subCommand, translatePath);
-            //   }
-            // }
+                  return object;
+                });
+                break;
+
+              case "string":
+                dataOptions.addStringOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "integer":
+                dataOptions.addIntegerOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "boolean":
+                dataOptions.addBooleanOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "user":
+                dataOptions.addUserOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "channel":
+                dataOptions.addChannelOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "role":
+                dataOptions.addRoleOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "mentionable":
+                dataOptions.addMentionableOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "number":
+                dataOptions.addNumberOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+
+              case "attachment":
+                dataOptions.addAttachmentOption((object: any) => {
+                  this.translation.setCommandOptionsTranslations(
+                    commandName,
+                    option,
+                    object,
+                    lastTranslationPath
+                  );
+
+                  return object;
+                });
+                break;
+            }
           }
         };
 
-        findOptions(command.options, command.data);
+        await findOptions(command.options, command.data);
 
         this.translation.setCommandTranslations(command, categoryName);
 
@@ -164,7 +272,11 @@ export default class DiscordClient extends Client {
       "commands"
     );
 
-    await this.application?.commands.set(this.commands);
+    try {
+      await this.application?.commands.set(this.commands);
+    } catch (er) {
+      console.log("deu eror", er);
+    }
 
     writeEventLine(`&aSynced all commands&f.`, "client", "commands");
 

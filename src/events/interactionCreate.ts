@@ -2,6 +2,7 @@ import { Interaction } from "discord.js";
 import EventStructure from "../controller/Event";
 import Translator from "../controller/Translator";
 import { ContextProps } from "../controller/Command";
+import config from "../../config";
 
 export default class Event extends EventStructure {
   run = async (interaction: Interaction) => {
@@ -22,6 +23,7 @@ export default class Event extends EventStructure {
       translator = new Translator(this.client, interaction, locale),
       t = translator.translate;
 
+    //#region Permissions
     var required = {
       type: new String(),
       permissions: new Array(),
@@ -51,13 +53,32 @@ export default class Event extends EventStructure {
 
     if (required.permissions.length && required.type)
       return await interaction.reply({
-        content: t(`permissions:${required.type}_no_permission`, {
+        content: t(`permissions:no_permission.${required.type}`, {
           permissions: required.permissions
             .map((permission) => `\`${permission}\``)
             .join(", "),
         }),
         ephemeral: true,
       });
+
+    let type: string | null = null;
+
+    if (
+      command.requirements.botDeveloper &&
+      !config.botDevelopers?.includes(interaction.user.id as never)
+    )
+      type = "botDeveloper";
+    else if (command.requirements.botAdmin && !ctx.userdb.admin)
+      type = "botAdmin";
+    else if (command.requirements.premium && !ctx.userdb.premium.active)
+      type = "premium";
+
+    if (type)
+      return await interaction.reply({
+        content: t(`permissions:no_permission.${type}`),
+        ephemeral: true,
+      });
+    //#endregion
 
     try {
       command.run({ interaction, ctx, t });

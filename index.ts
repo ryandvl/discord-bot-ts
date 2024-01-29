@@ -1,9 +1,10 @@
 import { IntentsBitField } from "discord.js";
 import DiscordClient from "./src/DiscordClient";
 import { writeEventLine } from "./src/ConsoleColorful";
+import { config } from "dotenv";
 
 // Use dotenv to get .env properties (TOKEN=...)
-require("dotenv").config();
+config();
 writeEventLine(
   "&cConfiguration(s) &awas loaded successfully&white.",
   "system",

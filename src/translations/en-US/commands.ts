@@ -1,6 +1,39 @@
 import { stringFormatter } from "../../utils/Text";
 
 export default {
+  //#region developer
+  eval: {
+    name: "eval",
+    description: "Developer Command",
+
+    modal: {
+      title: "Eval Command",
+      code: {
+        label: "🖥️ Code to execute:",
+        placeholder: "Enter the code here",
+      },
+    },
+
+    embed: {
+      description: "more",
+      title: "🔎 %arrow Result type: `{resultType}`",
+    },
+  },
+
+  reload: {
+    name: "reload",
+    description: "Developer Command",
+
+    options: {
+      command: {
+        name: "command",
+        description: "Command to reload",
+      },
+    },
+  },
+  //#endregion
+
+  //#region utility
   ping: {
     name: "ping",
     description: "Check my latency to see if i'm unstable!",
@@ -16,4 +49,5 @@ export default {
       ),
     },
   },
+  //#endregion
 };

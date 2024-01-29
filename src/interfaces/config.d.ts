@@ -1,8 +1,9 @@
 export interface ConfigProps {
-  developers?: string[] | [];
+  botDevelopers?: string[] | [];
   embedColors?: {
     [key: string]: string;
   };
+  commandDescription?: string | null;
   supportServer?: string | null;
   loaders?: {
     commandsDir?: string | "commands";

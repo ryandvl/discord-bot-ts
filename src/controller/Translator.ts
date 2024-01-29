@@ -51,17 +51,17 @@ export default class Translator {
   setPlaceholders(string: string, replaceParams: any = {}) {
     let translation: string = string;
 
-    translation = this.setPlaceholder(translation, {
+    translation = Translator.setPlaceholder(translation, {
       holders: ["%", "%"],
       places: this.translation.emojis,
     });
 
-    translation = this.setPlaceholder(translation, {
+    translation = Translator.setPlaceholder(translation, {
       holders: ["%", ""],
       places: SEPARATORS,
     });
 
-    translation = this.setPlaceholder(translation, {
+    translation = Translator.setPlaceholder(translation, {
       holders: ["{", "}"],
       places: {
         ...replaceParams,
@@ -77,7 +77,7 @@ export default class Translator {
     return translation;
   }
 
-  setPlaceholder(content: string, options: PlaceholderOptionsProps) {
+  static setPlaceholder(content: string, options: PlaceholderOptionsProps) {
     var hold = options.holders,
       regExp = new RegExp(`${hold[0]}\\w+${hold[1]}`, "g");
 

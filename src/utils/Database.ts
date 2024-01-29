@@ -1,4 +1,4 @@
-import { connect, model } from "mongoose";
+import { connect } from "mongoose";
 import Manager, { ModelsOptionsProps, ModelsProps } from "../database/Manager";
 import { Guild, User } from "discord.js";
 import { writeEventLine } from "../ConsoleColorful";

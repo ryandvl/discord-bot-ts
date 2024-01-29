@@ -1,8 +1,14 @@
 export default {
-  bot_no_permission:
-    "❌ %bar Eu não possuo as seguintes permissões: {permissions}",
-  member_no_permission:
-    "❌ %bar Você não possui as seguintes permissões: {permissions}",
+  no_permission: {
+    bot_no_permission:
+      "❌ %bar Eu não possuo as seguintes permissões: {permissions}",
+    member_no_permission:
+      "❌ %bar Você não possui as seguintes permissões: {permissions}",
+
+    botDeveloper: "❌ %bar Only Bot's Developer can use this command.",
+    botAdmin: "❌ %bar Only Bot's Admin or higher can use this command.",
+    premium: "❌ %bar Only Premium Users or higher can use this command.",
+  },
 
   CreateInstantInvite: "Criar Convites",
   KickMembers: "Expulsar Membros",

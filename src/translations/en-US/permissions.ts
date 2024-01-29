@@ -1,8 +1,14 @@
 export default {
-  bot_no_permission:
-    "❌ %bar I don't have the following permissions: {permissions}",
-  member_no_permission:
-    "❌ %bar You don't have the following permissions: {permissions}",
+  no_permission: {
+    bot_no_permission:
+      "❌ %bar I don't have the following permissions: {permissions}.",
+    member_no_permission:
+      "❌ %bar You don't have the following permissions: {permissions}.",
+
+    botDeveloper: "❌ %bar Only Bot's Developer can use this command.",
+    botAdmin: "❌ %bar Only Bot's Admin or higher can use this command.",
+    premium: "❌ %bar Only Premium Users or higher can use this command.",
+  },
 
   CreateInstantInvite: "Create Instant Invite",
   KickMembers: "Kick Members",

@@ -5,11 +5,6 @@ import CommandStructure, { CommandProps } from "../../controller/Command";
 export default class Command extends CommandStructure {
   constructor(client: DiscordClient) {
     super(client);
-
-    this.requirements = {
-      guildPermissions: [],
-      memberPermissions: [],
-    };
   }
 
   run = async ({ interaction, t }: CommandProps["run"]) => {

@@ -4,6 +4,9 @@ import {
   Client,
   ClientOptions,
   Collection,
+  SlashCommandBuilder,
+  SlashCommandStringOption,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
 import { readdirSync } from "fs";
 import path from "path";
@@ -12,7 +15,10 @@ import path from "path";
 //#region Files Modules
 import { writeEventLine } from "./ConsoleColorful";
 import config from "../config";
-import CommandStructure from "./controller/Command";
+import CommandStructure, {
+  OptionsProps,
+  optionsFunctions,
+} from "./controller/Command";
 import EventStructure from "./controller/Event";
 import Translation from "./controller/Translation";
 import DatabaseUtils from "./utils/Database";
@@ -79,13 +85,58 @@ export default class DiscordClient extends Client {
           commandName = commandFileName.split(".")[0];
 
         command.data.setName(commandName);
-        command.data.setDescription(
-          this.translation.translations["en-US"]["commands"][commandName]
-            ?.description ??
-            "Invalid Description, Please contact the Bot Developer."
-        );
 
-        this.translation.setCommandTranslations(command);
+        const findOptions = (
+          options: OptionsProps[] = [],
+          dataOptions: SlashCommandSubcommandBuilder | SlashCommandBuilder,
+          lastTranslationPath: string[] = []
+        ) => {
+          for (var option of options) {
+            var functiona = optionsFunctions[option.type](dataOptions);
+            var subCommandGroup = dataOptions.addStringOption(
+              (_: SlashCommandStringOption) =>
+                _.setName("ata").setDescription("test").setRequired(true)
+            );
+
+            this.translation.setCommandOptionsTranslations(
+              command,
+              option,
+              subCommandGroup,
+              option.type == "sub_command_group"
+                ? [...lastTranslationPath, "options", option.name]
+                : []
+            );
+
+            // if (option.type == "sub_command_group") {
+            //   for (var groupOption of option.options ?? []) {
+            //     var subCommand: SlashCommandSubcommandBuilder =
+            //         subCommandGroup.addSubcommand(
+            //           (_: SlashCommandSubcommandBuilder) => _
+            //         ),
+            //       translatePath = [
+            //         ...lastTranslationPath,
+            //         "options",
+            //         option.name,
+            //         "options",
+            //         groupOption.name,
+            //       ];
+
+            //     this.translation.setCommandOptionsTranslations(
+            //       command,
+            //       groupOption,
+            //       subCommand,
+            //       translatePath
+            //     );
+
+            //     findOptions(groupOption.options, subCommand, translatePath);
+            //   }
+            // }
+          }
+        };
+
+        findOptions(command.options, command.data);
+
+        this.translation.setCommandTranslations(command, categoryName);
 
         this.commands.push(command.data);
         this.slashCommands.set(commandName, command);
@@ -94,7 +145,7 @@ export default class DiscordClient extends Client {
 
     writeEventLine(
       `&aLoaded &c${this.commands.length} &acommands in Application&f.`,
-      "bot",
+      "client",
       "commands"
     );
 
@@ -109,13 +160,13 @@ export default class DiscordClient extends Client {
   async registrySlashCommands(): Promise<boolean> {
     writeEventLine(
       `&eSyncing &c${this.commands.length} &ecommands with &c${this.guilds.cache.size} &eguilds&f.`,
-      "bot",
+      "client",
       "commands"
     );
 
     await this.application?.commands.set(this.commands);
 
-    writeEventLine(`&aSynced all commands&f.`, "bot", "commands");
+    writeEventLine(`&aSynced all commands&f.`, "client", "commands");
 
     return true;
   }
@@ -143,7 +194,7 @@ export default class DiscordClient extends Client {
 
     writeEventLine(
       `&aLoaded &c${this.events.length} &aevents in Application&f.`,
-      "bot",
+      "client",
       "events"
     );
 

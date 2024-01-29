@@ -8,11 +8,11 @@ export interface TextInputProps {
   id: string;
   label: string;
   placeholder: string;
-  value: string;
-  minLength: number;
-  maxLength: number;
-  required: boolean;
-  style: string;
+  value?: string;
+  minLength?: number;
+  maxLength?: number;
+  required?: boolean;
+  style?: string;
 }
 
 const textInputStyles: TextInputStyleProps = {
@@ -20,7 +20,7 @@ const textInputStyles: TextInputStyleProps = {
   paragraph: 2,
 };
 
-const TextInput = (options: TextInputProps) => {
+const TextInput = (options: TextInputProps): TextInputBuilder => {
   const textInput = new TextInputBuilder();
 
   if ("id" in options) textInput.setCustomId(options.id);
@@ -29,16 +29,15 @@ const TextInput = (options: TextInputProps) => {
 
   if ("placeholder" in options) textInput.setPlaceholder(options.placeholder);
 
-  if ("value" in options) textInput.setValue(options.value);
+  if (options.value) textInput.setValue(options.value);
 
-  if ("minLength" in options) textInput.setMinLength(options.minLength);
+  textInput.setMinLength(options.minLength ?? 1);
 
-  if ("maxLength" in options) textInput.setMaxLength(options.maxLength);
+  textInput.setMaxLength(options.maxLength ?? 4000);
 
-  if ("required" in options) textInput.setRequired(options.required);
+  textInput.setRequired(options.required ?? true);
 
-  if ("style" in options)
-    textInput.setStyle(textInputStyles[options.style] ?? TextInputStyle.Short);
+  textInput.setStyle(textInputStyles[options.style ?? "short"]);
 
   return textInput;
 };

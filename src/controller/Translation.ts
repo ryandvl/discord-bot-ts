@@ -1,10 +1,20 @@
-import { LocaleString } from "discord.js";
+import {
+  LocaleString,
+  SlashCommandAttachmentOption,
+  SlashCommandMentionableOption,
+  SlashCommandOptionsOnlyBuilder,
+  SlashCommandSubcommandBuilder,
+  SlashCommandSubcommandGroupBuilder,
+  SlashCommandSubcommandsOnlyBuilder,
+} from "discord.js";
 import { readdirSync } from "fs";
 import path from "path";
 
-import CommandStructure from "./Command";
+import CommandStructure, { OptionsProps } from "./Command";
 import { writeEventLine } from "../ConsoleColorful";
 import DiscordClient from "../DiscordClient";
+import config from "../../config";
+import Translator from "./Translator";
 
 export const GUILD_EMOJIS = ["1198537913999302758"];
 export const SEPARATORS = {
@@ -53,18 +63,141 @@ export default class Translation {
     }
   }
 
-  setCommandTranslations(command: CommandStructure) {
+  setCommandTranslations(command: CommandStructure, category: string) {
+    command.data.setDescription(
+      this.translations["en-US"]["commands"][command.data.name]?.description ??
+        "Invalid Description, Please contact the Bot Developer."
+    );
+
     for (var locale of this.locales) {
+      var translation =
+        this.translations[locale]?.["commands"]?.[command.data.name];
+
+      //#region Command Name & Description
       command.data.setNameLocalization(
         locale,
-        this.translations[locale]?.commands?.[command.data.name]?.name ??
-          command.data.name
+        translation?.name ?? command.data.name
       );
+
+      var commandDescription = new String() as string;
+      if (config.commandDescription)
+        commandDescription = Translator.setPlaceholder(
+          config.commandDescription,
+          {
+            holders: ["{", "}"],
+            places: {
+              emoji:
+                this.translations[locale]?.["categories"]?.["commands"]?.[
+                  category
+                ].emoji,
+              description: translation?.description,
+              category: category,
+            },
+          }
+        );
+      else commandDescription = translation?.description;
 
       command.data.setDescriptionLocalization(
         locale,
-        this.translations[locale]?.commands?.[command.data.name]?.description ??
-          "Invalid Locale Description, Please contact the Bot Developer."
+        translation?.description
+          ? commandDescription
+          : "Invalid Locale Description, Please contact the Bot Developer."
+      );
+      //#endregion
+
+      // const optionHandler = (
+      //   option: OptionsProps,
+      //   data: any,
+      //   translationOption: any,
+      //   enTranslationOption: any
+      // ) => {
+      //   let optionType = option.type;
+
+      //   data.setName(option.name);
+      //   data.setDescription(enTranslationOption.description);
+
+      //   data.setNameLocalization(
+      //     locale,
+      //     translationOption?.name ?? option.name
+      //   );
+
+      //   data.setDescriptionLocalization(
+      //     locale,
+      //     translationOption?.description ??
+      //       "Invalid Description, Please contact the Bot Developer."
+      //   );
+
+      //   var optionJSON = {
+      //     ...option,
+      //     description: translationOption.description,
+      //   };
+
+      //   switch (optionType) {
+      //     case "sub_command_group":
+      //       let i = 0;
+      //       for (var groupOption of option.options ?? []) {
+      //         optionHandler(
+      //           groupOption,
+      //           command.options[i],
+      //           translationOption.options[groupOption.name],
+      //           enTranslationOption.options[groupOption.name]
+      //         );
+      //         i++;
+      //       }
+
+      //       break;
+      //     case "sub_command":
+      //       // data.addSubcommand({ ...option, description: translationOption });
+      //       break;
+
+      //     case "string":
+      //       break;
+      //   }
+      // };
+
+      // for (var option of command.options)
+      //   optionHandler(
+      //     option,
+      //     command.data,
+      //     translation.options[option.name],
+      //     this.translations["en-US"]?.["commands"]?.[command.data.name]
+      //       ?.options[option.name]
+      //   );
+    }
+  }
+
+  setCommandOptionsTranslations(
+    command: CommandStructure,
+    option: OptionsProps,
+    optionBuilder: any,
+    translatePath: string[]
+  ) {
+    for (var locale of this.locales) {
+      var translation =
+          this.translations[locale]["commands"][command.data.name],
+        enTranslation =
+          this.translations["en-US"]["commands"][command.data.name];
+
+      console.log(translatePath, enTranslation);
+      for (var pathString of translatePath) {
+        translation = translation[pathString];
+        enTranslation = enTranslation[pathString];
+      }
+
+      optionBuilder.setName(option.name);
+
+      optionBuilder.setDescription(
+        enTranslation.options[option.name].description ??
+          "Invalid Description, Please contact the Bot Developer."
+      );
+
+      optionBuilder.setNameLocalization(
+        locale,
+        translation.options[option.name].name
+      );
+      optionBuilder.setDescriptionLocalization(
+        locale,
+        translation.options[option.name].description
       );
     }
   }

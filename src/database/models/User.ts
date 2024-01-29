@@ -18,6 +18,14 @@ export const modelOption: ModelsOptionsProps[0] = {
 
 export const schema = new Schema({
   _id: { type: String, require: true },
+  admin: { type: Boolean, default: false },
+  economy: {
+    coins: { type: Number, default: 0 },
+  },
+  premium: {
+    active: { type: Boolean, default: false },
+    at: { type: Number, default: 0 },
+  },
 });
 
 export default model(modelOption.name, schema);

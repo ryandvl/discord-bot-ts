@@ -123,7 +123,6 @@ export default class Translation {
         translation = translation[pathString];
         enTranslation = enTranslation[pathString];
       }
-
       optionBuilder.setDescription(
         enTranslation.options[option.name].description ??
           "Invalid Description, Please contact the Bot Developer."

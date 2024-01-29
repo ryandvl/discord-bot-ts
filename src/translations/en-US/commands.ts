@@ -28,6 +28,22 @@ export default {
       command: {
         name: "command",
         description: "Command to reload",
+        options: {
+          command_name: {
+            name: "command_name",
+            description: "Name of command to reload",
+          },
+        },
+      },
+      file: {
+        name: "file",
+        description: "File to reload",
+        options: {
+          file_name: {
+            name: "file_name",
+            description: "Path of file to reload",
+          },
+        },
       },
     },
   },

@@ -4,10 +4,8 @@ import {
   Client,
   ClientOptions,
   Collection,
-  SharedSlashCommandOptions,
-  SlashCommandBuilder,
-  SlashCommandStringOption,
-  SlashCommandSubcommandBuilder,
+  REST,
+  Routes,
 } from "discord.js";
 import { readdirSync } from "fs";
 import path from "path";
@@ -16,10 +14,7 @@ import path from "path";
 //#region Files Modules
 import { writeEventLine } from "./ConsoleColorful";
 import config from "../config";
-import CommandStructure, {
-  OptionsProps,
-  optionsFunctions,
-} from "./controller/Command";
+import CommandStructure, { OptionsProps } from "./controller/Command";
 import EventStructure from "./controller/Event";
 import Translation from "./controller/Translation";
 import DatabaseUtils from "./utils/Database";
@@ -103,7 +98,11 @@ export default class DiscordClient extends Client {
                     lastTranslationPath
                   );
 
-                  findOptions(option.options, object, lastTranslationPath);
+                  findOptions(option.options, object, [
+                    ...lastTranslationPath,
+                    "options",
+                    option.name,
+                  ]);
 
                   return object;
                 });
@@ -117,6 +116,12 @@ export default class DiscordClient extends Client {
                     object,
                     lastTranslationPath
                   );
+
+                  findOptions(option.options, object, [
+                    ...lastTranslationPath,
+                    "options",
+                    option.name,
+                  ]);
 
                   return object;
                 });
@@ -244,9 +249,17 @@ export default class DiscordClient extends Client {
 
         await findOptions(command.options, command.data);
 
+        // let options = [];
+        // for (var option of command.options) {
+        //   options.push(option);
+        // }
+
         this.translation.setCommandTranslations(command, categoryName);
 
-        this.commands.push(command.data);
+        command._data = command.data.toJSON();
+        command.path = commandDirectory;
+
+        this.commands.push(command._data);
         this.slashCommands.set(commandName, command);
       }
     }
@@ -266,6 +279,10 @@ export default class DiscordClient extends Client {
    * @returns {Promise<boolean>}
    */
   async registrySlashCommands(): Promise<boolean> {
+    const rest = new REST({ version: "10" }).setToken(
+      process.env.TOKEN as string
+    );
+
     writeEventLine(
       `&eSyncing &c${this.commands.length} &ecommands with &c${this.guilds.cache.size} &eguilds&f.`,
       "client",
@@ -273,9 +290,12 @@ export default class DiscordClient extends Client {
     );
 
     try {
+      // await rest.put(Routes.applicationCommands(this.user!.id), {
+      //   body: this.commands,
+      // });
       await this.application?.commands.set(this.commands);
     } catch (er) {
-      console.log("deu eror", er);
+      console.log("Error: ", er);
     }
 
     writeEventLine(`&aSynced all commands&f.`, "client", "commands");
@@ -283,6 +303,21 @@ export default class DiscordClient extends Client {
     return true;
   }
 
+  async reloadCommand(commandName: string): Promise<boolean> {
+    var command = this.slashCommands.get(commandName);
+
+    if (!command?.path) return false;
+
+    this.commands = [];
+    this.slashCommands.clear();
+
+    delete require.cache[require.resolve(command.path)];
+
+    await this.loadCommands();
+    await this.registrySlashCommands();
+
+    return true;
+  }
   /**
    * Load all Discord Events in the Bot
    * @async

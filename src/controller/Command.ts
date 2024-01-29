@@ -48,24 +48,6 @@ export const optionsType: OptionsTypeStringProps = {
   attachment: 11,
 };
 
-export interface OptionsTypeFunctionProps {
-  [key: string]: string;
-}
-
-export const optionsFunctions: OptionsTypeFunctionProps = {
-  sub_command: "builder.addSubcommand",
-  sub_command_group: "builder.addSubcommandGroup",
-  string: "addStringOption",
-  integer: "builder.addIntegerOption",
-  boolean: "builder.addBooleanOption",
-  user: "builder.addUserOption",
-  channel: "builder.addChannelOption",
-  role: "builder.addRoleOption",
-  mentionable: "builder.addMentionableOption",
-  number: "builder.addNumberOption",
-  attachment: "builder.addAttachmentOption",
-};
-
 export interface ContextProps {
   db: DatabaseUtils;
   userdb: any;
@@ -86,6 +68,9 @@ export default class CommandStructure {
   options: OptionsProps[];
 
   data: SlashCommandBuilder;
+  _data: any;
+
+  path?: string;
 
   constructor(client: DiscordClient) {
     this.client = client;

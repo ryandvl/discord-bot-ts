@@ -28,6 +28,22 @@ export default {
       command: {
         name: "comando",
         description: "Comando para reiniciar",
+        options: {
+          command_name: {
+            name: "nome_do_comando",
+            description: "Nome do comando para reiniciar",
+          },
+        },
+      },
+      file: {
+        name: "caminho_do_arquivo",
+        description: "Arquivo para reiniciar",
+        options: {
+          file_name: {
+            name: "nome_do_arquivo",
+            description: "Caminho do arquivo para reiniciar",
+          },
+        },
       },
     },
   },

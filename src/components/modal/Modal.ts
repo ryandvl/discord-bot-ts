@@ -1,10 +1,10 @@
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from "discord.js";
-import { Builders } from "../ActionRow";
+import { ModalBuilders } from "./ModalRow";
 
 export interface ModalProps {
   id: string;
   title: string;
-  components: Array<ActionRowBuilder<Builders>>;
+  components: Array<ActionRowBuilder<ModalBuilders>>;
 }
 
 const Modal = (options: ModalProps) => {

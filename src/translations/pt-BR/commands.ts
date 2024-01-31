@@ -46,6 +46,18 @@ export default {
         },
       },
     },
+
+    command: {
+      invalid: "❌ %bar Este **comando** é inválido.",
+      error: "❌ %bar Um **erro** foi ocorrido.",
+      reloaded: "✅ %bar **Comando** reiniciado.",
+    },
+
+    file: {
+      invalid: "❌ %bar Este **caminho de arquivo** é inválido.",
+      error: "❌ %bar Um **erro** foi ocorrido.",
+      reloaded: "✅ %bar **Arquivo** reiniciado.",
+    },
   },
   //#endregion
 

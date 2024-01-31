@@ -110,10 +110,14 @@ export default class Translation {
   setCommandOptionsTranslations(
     commandName: string,
     option: OptionsProps,
-    optionBuilder: any,
     translatePath: string[]
   ) {
-    optionBuilder.setName(option.name.toString());
+    let newOption: any = {
+      description_localizations: {},
+      name_localizations: {},
+    };
+
+    newOption.name = option.name;
 
     for (var locale of this.locales) {
       var translation = this.translations[locale]["commands"][commandName],
@@ -123,21 +127,35 @@ export default class Translation {
         translation = translation[pathString];
         enTranslation = enTranslation[pathString];
       }
-      optionBuilder.setDescription(
+      newOption.description =
         enTranslation.options[option.name].description ??
-          "Invalid Description, Please contact the Bot Developer."
-      );
+        "Invalid Description, Please contact the Bot Developer.";
 
-      optionBuilder.setNameLocalization(
-        locale,
-        translation.options[option.name].name
-      );
+      newOption.name_localizations[locale] =
+        translation.options[option.name].name;
 
-      optionBuilder.setDescriptionLocalization(
-        locale,
-        translation.options[option.name].description
-      );
+      newOption.description_localizations[locale] =
+        translation.options[option.name].description;
+
+      if (["string", "integer", "number"].includes(option.type.toLowerCase())) {
+        newOption.choices = [];
+
+        for (var choice of option.choices ?? []) {
+          let newChoice: any = { name_localizations: {} };
+
+          newChoice.name = choice.name;
+          newChoice.value = choice.value;
+
+          newChoice.name_localizations[locale] =
+            translation.options[option.name].choices?.[choice.name]?.name ??
+            choice.name;
+
+          newOption.choices.push(newChoice);
+        }
+      }
     }
+
+    return newOption;
   }
 
   /**

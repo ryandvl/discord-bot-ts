@@ -1,7 +1,10 @@
-import { existsSync } from "fs";
+import { existsSync, readdirSync } from "fs";
 import DiscordClient from "../../DiscordClient";
-import CommandStructure, { CommandProps } from "../../controller/Command";
-import path from "path";
+import CommandStructure, {
+  ChoicesProps,
+  CommandProps,
+} from "../../controller/Command";
+import path, { join } from "path";
 
 export default class Command extends CommandStructure {
   constructor(client: DiscordClient) {
@@ -16,6 +19,21 @@ export default class Command extends CommandStructure {
           {
             name: "command_name",
             type: "string",
+            choices: (() => {
+              let commands: ChoicesProps[] = [];
+
+              var categoryDir = join(__dirname, "..");
+              for (var category of readdirSync(categoryDir))
+                for (var command of readdirSync(join(categoryDir, category))) {
+                  let commandName = command.split(".")[0];
+                  commands.push({
+                    name: commandName,
+                    value: commandName,
+                  });
+                }
+
+              return commands.length <= 25 ? commands : undefined;
+            })(),
             required: true,
           },
         ],
@@ -42,17 +60,20 @@ export default class Command extends CommandStructure {
 
         if (!this.client.slashCommands.get(command.toLowerCase()))
           return await interaction.reply({
-            content: "Comando não existe",
+            content: t("commands:reload.command.invalid"),
             ephemeral: true,
           });
 
         var isReloaded = await this.client.reloadCommand(command.toLowerCase());
 
         if (isReloaded)
-          await interaction.reply({ content: "reiniciado", ephemeral: true });
+          await interaction.reply({
+            content: t("commands:reload.command.reloaded"),
+            ephemeral: true,
+          });
         else
           await interaction.reply({
-            content: "não reiniciou",
+            content: t("commands:reload.command.error"),
             ephemeral: true,
           });
         break;
@@ -62,7 +83,7 @@ export default class Command extends CommandStructure {
 
         if (!existsSync(file))
           return await interaction.reply({
-            content: "não existe o arquivo",
+            content: t("commands:reload.file.invalid"),
             ephemeral: true,
           });
 
@@ -72,22 +93,16 @@ export default class Command extends CommandStructure {
           delete require.cache[require.resolve(filePath)];
         } catch (error) {
           return await interaction.reply({
-            content: "deu erro, não existe",
+            content: t("commands:reload.file.error"),
             ephemeral: true,
           });
         }
 
         await interaction.reply({
-          content: "arquivo reiniciado",
+          content: t("commands:reload.file.reloaded"),
           ephemeral: true,
         });
         break;
-
-      default:
-        await interaction.reply({
-          content: "tipo não existe",
-          ephemeral: true,
-        });
     }
   };
 }

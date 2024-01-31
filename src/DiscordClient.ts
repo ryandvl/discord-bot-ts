@@ -14,7 +14,10 @@ import path from "path";
 //#region Files Modules
 import { writeEventLine } from "./ConsoleColorful";
 import config from "../config";
-import CommandStructure, { OptionsProps } from "./controller/Command";
+import CommandStructure, {
+  OptionsProps,
+  optionsType,
+} from "./controller/Command";
 import EventStructure from "./controller/Event";
 import Translation from "./controller/Translation";
 import DatabaseUtils from "./utils/Database";
@@ -81,182 +84,66 @@ export default class DiscordClient extends Client {
           commandName = commandFileName.split(".")[0];
 
         command.data.setName(commandName);
-
-        const findOptions = async (
-          options: OptionsProps[] = [],
-          dataOptions: any,
-          lastTranslationPath: string[] = []
-        ) => {
-          for (var option of options) {
-            switch (option.type) {
-              case "sub_command_group":
-                dataOptions.addSubcommandGroup((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  findOptions(option.options, object, [
-                    ...lastTranslationPath,
-                    "options",
-                    option.name,
-                  ]);
-
-                  return object;
-                });
-                break;
-
-              case "sub_command":
-                dataOptions.addSubcommand((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  findOptions(option.options, object, [
-                    ...lastTranslationPath,
-                    "options",
-                    option.name,
-                  ]);
-
-                  return object;
-                });
-                break;
-
-              case "string":
-                dataOptions.addStringOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "integer":
-                dataOptions.addIntegerOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "boolean":
-                dataOptions.addBooleanOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "user":
-                dataOptions.addUserOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "channel":
-                dataOptions.addChannelOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "role":
-                dataOptions.addRoleOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "mentionable":
-                dataOptions.addMentionableOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "number":
-                dataOptions.addNumberOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-
-              case "attachment":
-                dataOptions.addAttachmentOption((object: any) => {
-                  this.translation.setCommandOptionsTranslations(
-                    commandName,
-                    option,
-                    object,
-                    lastTranslationPath
-                  );
-
-                  return object;
-                });
-                break;
-            }
-          }
-        };
-
-        await findOptions(command.options, command.data);
-
-        // let options = [];
-        // for (var option of command.options) {
-        //   options.push(option);
-        // }
-
         this.translation.setCommandTranslations(command, categoryName);
 
-        command._data = command.data.toJSON();
+        const handleOptions = async (
+          options: OptionsProps["options"] = [],
+          translationPath: string[] = []
+        ) => {
+          let newOptions: any[] = [];
+
+          for (var option of options) {
+            var optionType = option.type.toLowerCase();
+
+            let newOption: any = {};
+
+            newOption.type = optionsType[optionType];
+
+            if (optionType == "channel")
+              newOption.channel_types = option.channel_types ?? [];
+
+            if (["string", "integer", "number"].includes(optionType))
+              newOption.autocomplete = option.autocomplete ?? false;
+
+            if (["integer", "number"].includes(optionType)) {
+              newOption.min_value = option.min_value ?? 1;
+              newOption.max_value = option.max_value ?? 1000000;
+            }
+
+            if (optionType == "string") {
+              newOption.min_length = option.min_length ?? 0;
+              newOption.max_length = option.max_length ?? 6000;
+            }
+
+            newOption = {
+              ...this.translation.setCommandOptionsTranslations(
+                commandName,
+                option,
+                translationPath
+              ),
+              ...newOption,
+            };
+
+            if (["sub_command_group", "sub_command"].includes(optionType)) {
+              newOption.options = await handleOptions(option.options, [
+                ...translationPath,
+                "options",
+                option.name,
+              ]);
+            } else {
+              newOption.required = option.required ?? false;
+            }
+
+            newOptions.push(newOption);
+          }
+
+          return newOptions;
+        };
+
+        command._data = {
+          ...command.data.toJSON(),
+          options: await handleOptions(command.options),
+        };
         command.path = commandDirectory;
 
         this.commands.push(command._data);
@@ -290,10 +177,9 @@ export default class DiscordClient extends Client {
     );
 
     try {
-      // await rest.put(Routes.applicationCommands(this.user!.id), {
-      //   body: this.commands,
-      // });
-      await this.application?.commands.set(this.commands);
+      await rest.put(Routes.applicationCommands(this.user!.id), {
+        body: this.commands,
+      });
     } catch (er) {
       console.log("Error: ", er);
     }

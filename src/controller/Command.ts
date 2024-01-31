@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   PermissionsString,
   SlashCommandBuilder,
@@ -18,16 +19,25 @@ export interface RequirementsProps {
 
 export interface ChoicesProps {
   name: string;
+  name_localizations?: any;
   value: string;
 }
 
 export interface OptionsProps {
-  name: string;
-  description?: string;
   type: string;
+  name: string;
+  name_localizations?: any;
+  description?: string;
+  description_localizations?: any;
   required?: boolean;
   choices?: ChoicesProps[];
   options?: OptionsProps[];
+  channel_types?: ChannelType[];
+  min_value?: number;
+  max_value?: number;
+  min_length?: number;
+  max_length?: number;
+  autocomplete?: boolean;
 }
 
 interface OptionsTypeStringProps {

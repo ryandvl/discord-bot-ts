@@ -1,6 +1,6 @@
 import { ModalSubmitInteraction } from "discord.js";
 import DiscordClient from "../../DiscordClient";
-import { ActionRow, Embed, Modal, TextInput } from "../../components";
+import { ModalRow, Embed, Modal, TextInput } from "../../components";
 import CommandStructure, { CommandProps } from "../../controller/Command";
 
 export default class Command extends CommandStructure {
@@ -20,7 +20,7 @@ export default class Command extends CommandStructure {
         title: t("commands:eval.modal.title"),
         id: "eval_command",
         components: [
-          ActionRow([
+          ModalRow([
             TextInput({
               id: "code",
               label: t("commands:eval.modal.code.label"),

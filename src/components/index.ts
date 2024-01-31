@@ -8,6 +8,7 @@ import RoleSelectMenu from "./menus/RoleSelectMenu";
 import StringSelectMenu from "./menus/StringSelectMenu";
 import UserSelectMenu from "./menus/UserSelectMenu";
 import Modal from "./modal/Modal";
+import ModalRow from "./modal/ModalRow";
 import TextInput from "./modal/TextInput";
 
 export {
@@ -21,5 +22,6 @@ export {
   StringSelectMenu,
   UserSelectMenu,
   Modal,
+  ModalRow,
   TextInput,
 };

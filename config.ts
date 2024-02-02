@@ -1,7 +1,7 @@
 import { ConfigProps } from "./config-props";
 
 const config: ConfigProps = {
-  botDevelopers: ["878683493759090718"],
+  botDevelopers: [],
   commandDescription: "[{emoji}] {description}",
   embedColors: {
     default: "#ac4dff",

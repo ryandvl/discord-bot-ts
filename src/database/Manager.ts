@@ -44,6 +44,7 @@ export default class Manager {
 
       var modelOption = modelModule.modelOption;
 
+      this.modelsOptions[modelName.toLowerCase()] = modelOption;
       this.modelsOptions[modelOption.name] = modelOption;
 
       for (var type of modelModule.modelOption.types)

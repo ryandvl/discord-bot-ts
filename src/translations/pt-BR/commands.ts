@@ -20,6 +20,52 @@ export default {
     },
   },
 
+  inspect: {
+    name: "inspecionar",
+    description: "Comando de Desenvolvedor",
+
+    options: {
+      guild: {
+        name: "servidor",
+        description: "Inspecionar banco de dados de Servidor",
+        options: {
+          id: {
+            name: "id",
+            description: "ID de Servidor para inspecionar",
+          },
+        },
+      },
+      user: {
+        name: "usuário",
+        description: "Inspecionar banco de dados de Usuário",
+        options: {
+          id: {
+            name: "id",
+            description: "ID de Usuário para inspecionar",
+          },
+        },
+      },
+    },
+
+    no_exists: "❌ %bar Este **id** não existe.",
+    embed: {
+      title: "🔎 %arrow Inspecionando;",
+      description: "**{key}**: {info} %bar `{type}`",
+      footer: "Caminho: {path}",
+    },
+    modal: {
+      title: "Comando Inspecionar",
+      value: {
+        label: "📩 Valor para alterar:",
+        placeholder: "Coloque o valor aqui",
+      },
+      success: "✅ %bar Alterado com sucesso.",
+    },
+    components: {
+      back: "Voltar",
+    },
+  },
+
   reload: {
     name: "reiniciar",
     description: "Comando de Desenvolvedor",

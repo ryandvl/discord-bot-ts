@@ -23,8 +23,21 @@ export interface ChoicesProps {
   value: string;
 }
 
+type types =
+  | "sub_command"
+  | "sub_command_group"
+  | "string"
+  | "integer"
+  | "boolean"
+  | "user"
+  | "channel"
+  | "role"
+  | "mentionable"
+  | "number"
+  | "attachment";
+
 export interface OptionsProps {
-  type: string;
+  type: types;
   name: string;
   name_localizations?: any;
   description?: string;

@@ -1,15 +1,17 @@
 import {
   AnySelectMenuInteraction,
+  ChatInputCommandInteraction,
   CollectorFilter,
   ComponentType,
   Interaction,
-  InteractionResponse,
+  Message,
 } from "discord.js";
 
 type FunctionProps = (interaction: AnySelectMenuInteraction) => any;
 
 export interface CollectorProps {
-  response: InteractionResponse;
+  interaction: ChatInputCommandInteraction;
+  response: Message;
   filter?: Function;
   callbacks?: {
     collect?: FunctionProps;
@@ -19,7 +21,7 @@ export interface CollectorProps {
   };
   time?: Number;
   component: {
-    id: string;
+    id?: string;
     type:
       | "button"
       | "stringSelect"
@@ -49,6 +51,7 @@ export const types = {
 
 export default class Collector {
   response: CollectorProps["response"];
+  interaction: CollectorProps["interaction"];
 
   component: CollectorProps["component"];
   filter?: CollectorProps["filter"];
@@ -59,13 +62,14 @@ export default class Collector {
 
   constructor(options: CollectorProps) {
     this.response = options.response;
+    this.interaction = options.interaction;
 
     this.component = options.component;
 
     if (options.filter) this.filter = options.filter;
     else
       this.filter = (interaction: Interaction) =>
-        interaction.user.id == this.response.interaction.user.id;
+        interaction.user.id == this.interaction.user.id;
 
     this.callbacks = options.callbacks;
 
@@ -82,12 +86,12 @@ export default class Collector {
     });
 
     collector.on("collect", (interaction) => {
-      if (this.callbacks?.collect && this.component.id == interaction.customId)
+      if (this.callbacks?.collect)
         this.callbacks.collect(interaction as AnySelectMenuInteraction);
     });
 
     collector.on("dispose", (interaction) => {
-      if (this.callbacks?.dispose && this.component.id == interaction.customId)
+      if (this.callbacks?.dispose)
         this.callbacks.dispose(interaction as AnySelectMenuInteraction);
     });
 
@@ -96,8 +100,7 @@ export default class Collector {
     });
 
     collector.on("ignore", (interaction) => {
-      if (this.callbacks?.ignore && this.component.id == interaction.customId)
-        this.callbacks.ignore(interaction);
+      if (this.callbacks?.ignore) this.callbacks.ignore(interaction);
     });
 
     return collector;

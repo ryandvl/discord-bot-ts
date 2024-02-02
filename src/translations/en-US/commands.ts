@@ -20,6 +20,52 @@ export default {
     },
   },
 
+  inspect: {
+    name: "inspect",
+    description: "Developer Command",
+
+    options: {
+      guild: {
+        name: "guild",
+        description: "Inspect Guild database",
+        options: {
+          id: {
+            name: "id",
+            description: "GuildID to inspect",
+          },
+        },
+      },
+      user: {
+        name: "user",
+        description: "Inspect User database",
+        options: {
+          id: {
+            name: "id",
+            description: "UserID to inspect",
+          },
+        },
+      },
+    },
+
+    no_exists: "❌ %bar This **id** no exists.",
+    embed: {
+      title: "🔎 %arrow Inspecting;",
+      description: "**{key}**: {info} %bar `{type}`",
+      footer: "Path: {path}",
+    },
+    modal: {
+      title: "Inspect Command",
+      value: {
+        label: "📩 Value to change:",
+        placeholder: "Enter the value here",
+      },
+      success: "✅ %bar Alterado com sucesso.",
+    },
+    components: {
+      back: "Back",
+    },
+  },
+
   reload: {
     name: "reload",
     description: "Developer Command",

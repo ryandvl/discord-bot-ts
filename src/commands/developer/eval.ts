@@ -70,7 +70,7 @@ export default class Command extends CommandStructure {
             resultType,
           }),
           description: (("```js\n" + result) as string) + "```",
-          color: "#2B2D31",
+          color: "invisible",
         }),
       ],
       ephemeral: true,

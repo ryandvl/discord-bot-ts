@@ -4,7 +4,7 @@ import CommandStructure, {
   ChoicesProps,
   CommandProps,
 } from "../../controller/Command";
-import path, { join } from "path";
+import { join } from "path";
 
 export default class Command extends CommandStructure {
   constructor(client: DiscordClient) {
@@ -14,7 +14,6 @@ export default class Command extends CommandStructure {
       {
         name: "command",
         type: "sub_command",
-        required: true,
         options: [
           {
             name: "command_name",
@@ -41,7 +40,6 @@ export default class Command extends CommandStructure {
       {
         name: "file",
         type: "sub_command",
-        required: true,
         options: [
           {
             name: "file_name",
@@ -87,7 +85,7 @@ export default class Command extends CommandStructure {
             ephemeral: true,
           });
 
-        var filePath = path.join(__dirname, "..", "..", "..", file);
+        var filePath = join(__dirname, "..", "..", "..", file);
 
         try {
           delete require.cache[require.resolve(filePath)];

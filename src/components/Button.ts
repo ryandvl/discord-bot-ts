@@ -10,8 +10,8 @@ export interface ButtonStyleProps {
 
 export interface ButtonProps {
   emoji?: ComponentEmojiResolvable;
-  label: string;
-  style?: string;
+  label?: string;
+  style?: "primary" | "secondary" | "success" | "danger" | "link";
   id: string;
   disabled?: boolean;
 }
@@ -30,7 +30,7 @@ const Button = (options: ButtonProps) => {
   if ("emoji" in options)
     button.setEmoji(options.emoji as ComponentEmojiResolvable);
 
-  if ("label" in options) button.setLabel(options.label);
+  if ("label" in options) button.setLabel(options.label ?? "???");
 
   if (options.style?.toUpperCase() !== "LINK") button.setCustomId(options.id);
   else button.setURL(options.id);

@@ -11,7 +11,7 @@ import { readdirSync } from "fs";
 import path from "path";
 
 import CommandStructure, { OptionsProps } from "./Command";
-import { writeEventLine } from "../ConsoleColorful";
+import { writeEventLine } from "../utils/ConsoleColorful";
 import DiscordClient from "../DiscordClient";
 import config from "../../config";
 import Translator from "./Translator";

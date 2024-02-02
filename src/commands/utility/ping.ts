@@ -1,5 +1,5 @@
 import DiscordClient from "../../DiscordClient";
-import { ActionRow, Embed, UserSelectMenu } from "../../components";
+import { Embed } from "../../components";
 import CommandStructure, { CommandProps } from "../../controller/Command";
 
 export default class Command extends CommandStructure {
@@ -16,15 +16,6 @@ export default class Command extends CommandStructure {
 
     await interaction.reply({
       content: t("commands:ping.content"),
-      components: [
-        ActionRow([
-          UserSelectMenu({
-            id: "user",
-            placeholder: "Selecione um usuário",
-            users: interaction.guild!.members.cache.map((a) => a.user.username),
-          }),
-        ]),
-      ],
       embeds: [
         Embed({
           color: latencyColor as string,

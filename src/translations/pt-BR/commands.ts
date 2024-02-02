@@ -66,6 +66,11 @@ export default {
     },
   },
 
+  test: {
+    name: "teste",
+    description: "Comando de Desenvolvedor",
+  },
+
   reload: {
     name: "reiniciar",
     description: "Comando de Desenvolvedor",

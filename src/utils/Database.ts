@@ -1,7 +1,7 @@
 import { connect } from "mongoose";
 import Manager, { ModelsOptionsProps, ModelsProps } from "../database/Manager";
 import { Guild, User } from "discord.js";
-import { writeEventLine } from "../ConsoleColorful";
+import { writeEventLine } from "./ConsoleColorful";
 
 export type type = string | number;
 export type content = User | Guild | any;

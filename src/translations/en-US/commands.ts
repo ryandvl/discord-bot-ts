@@ -105,6 +105,11 @@ export default {
       reloaded: "✅ %bar **File** realoaded.",
     },
   },
+
+  test: {
+    name: "test",
+    description: "Developer Command",
+  },
   //#endregion
 
   //#region utility

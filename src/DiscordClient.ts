@@ -12,7 +12,7 @@ import path from "path";
 //#endregion
 
 //#region Files Modules
-import { writeEventLine } from "./ConsoleColorful";
+import { writeEventLine } from "./utils/ConsoleColorful";
 import config from "../config";
 import CommandStructure, {
   OptionsProps,

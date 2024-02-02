@@ -1,7 +1,8 @@
 import { IntentsBitField } from "discord.js";
-import DiscordClient from "./src/DiscordClient";
-import { writeEventLine } from "./src/ConsoleColorful";
 import { config } from "dotenv";
+
+import { writeEventLine } from "./src/utils/ConsoleColorful";
+import DiscordClient from "./src/DiscordClient";
 
 // Use dotenv to get .env properties (TOKEN=...)
 config();

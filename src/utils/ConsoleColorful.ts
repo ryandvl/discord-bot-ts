@@ -1,5 +1,5 @@
-import { getDate } from "./utils/Date";
-import { spaceString } from "./utils/Text";
+import { getDate } from "./Date";
+import { spaceString } from "./Text";
 
 interface AnsiProps {
   [key: string]: number;

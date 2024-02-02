@@ -1,4 +1,4 @@
-import { writeEventLine } from "../ConsoleColorful";
+import { writeEventLine } from "../utils/ConsoleColorful";
 import EventStructure from "../controller/Event";
 
 export default class Event extends EventStructure {

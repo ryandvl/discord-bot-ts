@@ -288,8 +288,12 @@ export default class Command extends CommandStructure {
                   content: t("commands:inspect.modal.success"),
                   ephemeral: true,
                 });
-                showPage();
-                menuCollector.collector.resetTimer();
+
+                setTimeout(() => {
+                  showPage();
+                  menuCollector.collector.resetTimer();
+                }, 2000);
+
                 return;
               }
 

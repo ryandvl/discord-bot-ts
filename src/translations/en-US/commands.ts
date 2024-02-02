@@ -59,7 +59,7 @@ export default {
         label: "📩 Value to change:",
         placeholder: "Enter the value here",
       },
-      success: "✅ %bar Alterado com sucesso.",
+      success: "✅ %bar Loading, please wait...",
     },
     components: {
       back: "Back",

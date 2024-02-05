@@ -1,12 +1,13 @@
 import { connect } from "mongoose";
 import Manager, { ModelsOptionsProps, ModelsProps } from "../database/Manager";
 import { Guild, User } from "discord.js";
-import { writeEventLine } from "./ConsoleColorful";
+
+import { writeEventLine } from "../utils/ConsoleColorful";
 
 export type type = string | number;
 export type content = User | Guild | any;
 
-export default class DatabaseUtils {
+export default class Database {
   database: any | null;
 
   manager: Manager;
@@ -43,6 +44,7 @@ export default class DatabaseUtils {
           "database",
           "connection"
         );
+
         console.error(error);
       });
   }

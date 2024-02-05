@@ -1,114 +1,61 @@
 import {
-  ChannelType,
-  ChatInputCommandInteraction,
-  PermissionsString,
+  ApplicationCommandType,
+  ContextMenuCommandBuilder,
   SlashCommandBuilder,
 } from "discord.js";
+
 import DiscordClient from "../DiscordClient";
-import Translator from "./Translator";
-import DatabaseUtils from "../utils/Database";
+import {
+  CommandRequirementsProps,
+  CommandOptionsProps,
+  CommandConstructorProps,
+  CommandTypeNames,
+} from "../types/command";
 
-export interface RequirementsProps {
-  botDeveloper?: boolean;
-  botAdmin?: boolean;
-  guildPermissions?: PermissionsString[];
-  memberPermissions?: PermissionsString[];
-  premium?: boolean;
-  default?: boolean;
-}
+export default class Command {
+  client!: DiscordClient;
 
-export interface ChoicesProps {
-  name: string;
-  name_localizations?: any;
-  value: string;
-}
+  requirements: CommandRequirementsProps;
+  options?: CommandOptionsProps[];
+  _options: CommandConstructorProps;
 
-type types =
-  | "sub_command"
-  | "sub_command_group"
-  | "string"
-  | "integer"
-  | "boolean"
-  | "user"
-  | "channel"
-  | "role"
-  | "mentionable"
-  | "number"
-  | "attachment";
-
-export interface OptionsProps {
-  type: types;
-  name: string;
-  name_localizations?: any;
-  description?: string;
-  description_localizations?: any;
-  required?: boolean;
-  choices?: ChoicesProps[];
-  options?: OptionsProps[];
-  channel_types?: ChannelType[];
-  min_value?: number;
-  max_value?: number;
-  min_length?: number;
-  max_length?: number;
-  autocomplete?: boolean;
-}
-
-interface OptionsTypeStringProps {
-  [key: string]: number;
-}
-
-export const optionsType: OptionsTypeStringProps = {
-  sub_command: 1,
-  sub_command_group: 2,
-  string: 3,
-  integer: 4,
-  boolean: 5,
-  user: 6,
-  channel: 7,
-  role: 8,
-  mentionable: 9,
-  number: 10,
-  attachment: 11,
-};
-
-export interface ContextProps {
-  db: DatabaseUtils;
-  userdb: any;
-}
-
-export interface CommandProps {
-  run: {
-    interaction: ChatInputCommandInteraction;
-    ctx: ContextProps;
-    t: Translator["translate"];
-  };
-}
-
-export default class CommandStructure {
-  client: DiscordClient;
-
-  requirements: RequirementsProps;
-  options: OptionsProps[];
-
-  data: SlashCommandBuilder;
+  data: SlashCommandBuilder | ContextMenuCommandBuilder;
   _data: any;
 
-  path?: string;
+  type: CommandTypeNames;
+  category!: string;
 
-  constructor(client: DiscordClient) {
-    this.client = client;
+  path!: string;
+  run: CommandConstructorProps["run"];
 
-    this.options = [];
+  constructor(options: CommandConstructorProps) {
     this.requirements = {
-      botDeveloper: false,
-      botAdmin: false,
-      guildPermissions: [],
-      premium: false,
-      default: true,
+      botDeveloper: options.requirements?.botDeveloper ?? false,
+      botAdmin: options.requirements?.botAdmin ?? false,
+      guildPermissions: options.requirements?.guildPermissions ?? [],
+      premium: options.requirements?.premium ?? false,
+      default: options.requirements?.default ?? true,
     };
 
-    this.data = new SlashCommandBuilder();
-  }
+    this.type = options.type ?? "chatInput";
+    switch (options.type) {
+      case "message":
+        this.data = new ContextMenuCommandBuilder();
+        this.data.setType(ApplicationCommandType.Message);
+        break;
 
-  async run({ interaction, ctx, t }: CommandProps["run"]): Promise<any> {}
+      case "user":
+        this.data = new ContextMenuCommandBuilder();
+        this.data.setType(ApplicationCommandType.User);
+        break;
+
+      default:
+        this.options = options.options ?? [];
+        this.data = new SlashCommandBuilder();
+    }
+
+    this._options = options;
+
+    this.run = options.run;
+  }
 }

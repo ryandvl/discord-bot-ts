@@ -1,5 +1,6 @@
 import { readdirSync } from "fs";
-import path from "path";
+import { Model } from "mongoose";
+import { join } from "path";
 
 export interface ModelsOptionsProps {
   [key: string]: {
@@ -13,7 +14,7 @@ export interface ModelsOptionsProps {
 export interface ModelsProps {
   [key: string]: {
     schema: any;
-    model: any;
+    model: Model<any>;
   };
 }
 
@@ -29,13 +30,11 @@ export default class Manager {
   }
 
   async loadModels() {
-    var modelsDirectory = path.join(__dirname, "models");
+    var modelsDirectory = join(__dirname, "models");
     for (var modelFileName of readdirSync(modelsDirectory)) {
       var modelName = modelFileName.split(".")[0];
 
-      const modelModule = await import(
-        path.join(modelsDirectory, modelFileName)
-      );
+      const modelModule = await import(join(modelsDirectory, modelFileName));
 
       this.models[modelName] = {
         schema: modelModule.schema,

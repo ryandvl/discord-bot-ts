@@ -1,13 +1,8 @@
-import DiscordClient from "../../DiscordClient";
 import { Embed } from "../../components";
-import CommandStructure, { CommandProps } from "../../controller/Command";
+import { Command } from "../../controller";
 
-export default class Command extends CommandStructure {
-  constructor(client: DiscordClient) {
-    super(client);
-  }
-
-  run = async ({ interaction, t }: CommandProps["run"]) => {
+export default new Command({
+  async run({ interaction, t }) {
     let latencyColor = "#ff2929";
 
     if (this.client.ws.ping < 150) latencyColor = "#64ff29";
@@ -37,5 +32,5 @@ export default class Command extends CommandStructure {
         }),
       ],
     });
-  };
-}
+  },
+});

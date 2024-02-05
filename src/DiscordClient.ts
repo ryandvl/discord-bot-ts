@@ -14,13 +14,14 @@ import path from "path";
 //#region Files Modules
 import { writeEventLine } from "./utils/ConsoleColorful";
 import config from "../config";
-import CommandStructure, {
-  OptionsProps,
-  optionsType,
-} from "./controller/Command";
-import EventStructure from "./controller/Event";
-import Translation from "./controller/Translation";
-import DatabaseUtils from "./utils/Database";
+import Command from "./controller/Command";
+import Event from "./controller/Event";
+import { Translation, Database } from "./controller";
+import {
+  CommandOptionTypeNames,
+  CommandOptionsProps,
+  OPTIONS_TYPES,
+} from "./types/command";
 //#endregion
 
 /**
@@ -30,31 +31,29 @@ import DatabaseUtils from "./utils/Database";
 export default class DiscordClient extends Client {
   _optionsClient: ClientOptions;
 
-  events: string[];
+  events: string[] = new Array<string>();
 
-  commands: ApplicationCommandDataResolvable[];
-  slashCommands: Collection<string, CommandStructure>;
+  commands: ApplicationCommandDataResolvable[] =
+    new Array<ApplicationCommandDataResolvable>();
+  slashCommands: Collection<string, Command> = new Collection<
+    string,
+    Command
+  >();
+  messageCommands: Collection<string, Command> = new Collection<
+    string,
+    Command
+  >();
+  userCommands: Collection<string, Command> = new Collection<string, Command>();
 
-  translation: Translation;
+  translation: Translation = new Translation(this);
 
-  database: DatabaseUtils;
+  database: Database = new Database();
 
-  startTime: number;
+  startTime: number = Date.now();
 
   constructor(options: ClientOptions) {
     super(options);
     this._optionsClient = options;
-
-    this.events = new Array<string>();
-
-    this.commands = new Array<ApplicationCommandDataResolvable>();
-    this.slashCommands = new Collection<string, CommandStructure>();
-
-    this.translation = new Translation(this);
-
-    this.database = new DatabaseUtils();
-
-    this.startTime = Date.now();
   }
 
   /**
@@ -80,74 +79,107 @@ export default class DiscordClient extends Client {
             commandFileName
           ),
           commandModule = await import(commandDirectory),
-          command: CommandStructure = new commandModule.default(this),
+          command: Command = commandModule.default,
           commandName = commandFileName.split(".")[0];
 
-        command.data.setName(commandName);
-        this.translation.setCommandTranslations(command, categoryName);
+        if (command.type == "chatInput") {
+          command.data.setName(commandName);
+          this.translation.setCommandTranslations(
+            "chatInput",
+            command,
+            commandName,
+            categoryName
+          );
 
-        const handleOptions = async (
-          options: OptionsProps["options"] = [],
-          translationPath: string[] = []
-        ) => {
-          let newOptions: any[] = [];
+          const handleOptions = async (
+            options: CommandOptionsProps["options"] = [],
+            translationPath: string[] = []
+          ) => {
+            let newOptions: any[] = [];
 
-          for (var option of options) {
-            var optionType = option.type.toLowerCase();
+            for (var option of options) {
+              var optionType =
+                option.type.toLowerCase() as CommandOptionTypeNames;
 
-            let newOption: any = {};
+              let newOption: any = {};
 
-            newOption.type = optionsType[optionType];
+              newOption.type = OPTIONS_TYPES[optionType];
 
-            if (optionType == "channel")
-              newOption.channel_types = option.channel_types ?? [];
+              if (optionType == "channel")
+                newOption.channel_types = option.channel_types ?? [];
 
-            if (["string", "integer", "number"].includes(optionType))
-              newOption.autocomplete = option.autocomplete ?? false;
+              if (["string", "integer", "number"].includes(optionType))
+                newOption.autocomplete = option.autocomplete ?? false;
 
-            if (["integer", "number"].includes(optionType)) {
-              newOption.min_value = option.min_value ?? 1;
-              newOption.max_value = option.max_value ?? 1000000;
+              if (["integer", "number"].includes(optionType)) {
+                newOption.min_value = option.min_value ?? 1;
+                newOption.max_value = option.max_value ?? 1000000;
+              }
+
+              if (optionType == "string") {
+                newOption.min_length = option.min_length ?? 0;
+                newOption.max_length = option.max_length ?? 6000;
+              }
+
+              newOption = {
+                ...this.translation.setCommandOptionsTranslations(
+                  commandName,
+                  option,
+                  translationPath
+                ),
+                ...newOption,
+              };
+
+              if (["sub_command_group", "sub_command"].includes(optionType)) {
+                newOption.options = await handleOptions(option.options, [
+                  ...translationPath,
+                  "options",
+                  option.name,
+                ]);
+              } else {
+                newOption.required = option.required ?? false;
+              }
+
+              newOptions.push(newOption);
             }
 
-            if (optionType == "string") {
-              newOption.min_length = option.min_length ?? 0;
-              newOption.max_length = option.max_length ?? 6000;
-            }
+            return newOptions;
+          };
 
-            newOption = {
-              ...this.translation.setCommandOptionsTranslations(
-                commandName,
-                option,
-                translationPath
-              ),
-              ...newOption,
-            };
+          command._data = {
+            ...command.data.toJSON(),
+            options: await handleOptions(command.options),
+          };
+        } else {
+          this.translation.setCommandTranslations(
+            "contextMenu",
+            command,
+            commandName,
+            categoryName
+          );
 
-            if (["sub_command_group", "sub_command"].includes(optionType)) {
-              newOption.options = await handleOptions(option.options, [
-                ...translationPath,
-                "options",
-                option.name,
-              ]);
-            } else {
-              newOption.required = option.required ?? false;
-            }
+          command._data = command.data.toJSON();
+        }
 
-            newOptions.push(newOption);
-          }
-
-          return newOptions;
-        };
-
-        command._data = {
-          ...command.data.toJSON(),
-          options: await handleOptions(command.options),
-        };
         command.path = commandDirectory;
+        command.category = categoryName;
+        command.client = this;
 
         this.commands.push(command._data);
-        this.slashCommands.set(commandName, command);
+
+        switch (command.type) {
+          case "chatInput":
+            this.slashCommands.set(commandName, command);
+            break;
+
+          case "message":
+            this.messageCommands.set(command.data.name, command);
+            break;
+
+          case "user":
+            this.userCommands.set(command.data.name, command);
+            break;
+        }
       }
     }
 
@@ -167,7 +199,7 @@ export default class DiscordClient extends Client {
    */
   async registrySlashCommands(): Promise<boolean> {
     const rest = new REST({ version: "10" }).setToken(
-      process.env.TOKEN as string
+      process.env.BOT_TOKEN as string
     );
 
     writeEventLine(
@@ -189,13 +221,35 @@ export default class DiscordClient extends Client {
     return true;
   }
 
-  async reloadCommand(commandName: string): Promise<boolean> {
-    var command = this.slashCommands.get(commandName);
+  /**
+   * Get command with name
+   * @returns {Command | false}
+   */
+  getCommand(commandName: string): Command | false {
+    var command =
+      this.slashCommands.get(commandName) ??
+      this.userCommands.get(commandName) ??
+      this.messageCommands.get(commandName);
 
-    if (!command?.path) return false;
+    if (!command) return false;
+
+    return command;
+  }
+
+  /**
+   * Reload command function to "/reload command"
+   * @async
+   * @returns {Promise<boolean>}
+   */
+  async reloadCommand(commandName: string): Promise<boolean> {
+    var command = this.getCommand(commandName);
+
+    if (!command) return false;
 
     this.commands = [];
     this.slashCommands.clear();
+    this.messageCommands.clear();
+    this.userCommands.clear();
 
     delete require.cache[require.resolve(command.path)];
 
@@ -204,6 +258,7 @@ export default class DiscordClient extends Client {
 
     return true;
   }
+
   /**
    * Load all Discord Events in the Bot
    * @async
@@ -218,7 +273,7 @@ export default class DiscordClient extends Client {
     for (var eventFileName of readdirSync(eventsDirectory)) {
       var eventDirectory: string = path.join(eventsDirectory, eventFileName),
         eventModule = await import(eventDirectory),
-        eventClass: EventStructure = new eventModule.default(this),
+        eventClass: Event = eventModule.default,
         eventName: string = eventFileName.split(".")[0];
 
       this.on(eventName, eventClass.run);
@@ -236,14 +291,12 @@ export default class DiscordClient extends Client {
 
   /**
    * Start all necessary functions to initialize the Bot
-   * @returns {Promise<boolean>}
+   * @returns {Promise<void>}
    */
-  async start(): Promise<boolean> {
+  async start(): Promise<void> {
     await this.translation.getLocales();
-    await this.login(process.env.TOKEN);
+    await this.login(process.env.BOT_TOKEN);
     await this.loadEvents();
     await this.loadCommands();
-
-    return true;
   }
 }

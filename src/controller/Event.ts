@@ -1,14 +1,13 @@
 import DiscordClient from "../DiscordClient";
 
-export interface AnyEventProps {
-  [key: string]: any;
+export interface EventConstructorProps {
+  run(this: DiscordClient, ...param: any): Promise<any>;
 }
 
-export default class EventStructure {
-  client: DiscordClient;
-  constructor(client: DiscordClient) {
-    this.client = client;
-  }
+export default class Event {
+  run: EventConstructorProps["run"];
 
-  run(param1: AnyEventProps, param2: AnyEventProps, param3: AnyEventProps) {}
+  constructor(options: EventConstructorProps) {
+    this.run = options.run;
+  }
 }

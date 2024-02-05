@@ -110,6 +110,14 @@ export default {
     name: "test",
     description: "Developer Command",
   },
+
+  testa: {
+    name: "TestA",
+  },
+
+  testb: {
+    name: "TestB",
+  },
   //#endregion
 
   //#region utility

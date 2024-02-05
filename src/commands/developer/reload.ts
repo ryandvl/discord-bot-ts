@@ -1,62 +1,56 @@
-import { existsSync, readdirSync } from "fs";
-import DiscordClient from "../../DiscordClient";
-import CommandStructure, {
-  ChoicesProps,
-  CommandProps,
-} from "../../controller/Command";
 import { join } from "path";
+import { Command } from "../../controller";
+import { existsSync, readdirSync } from "fs";
+import { CommandOptionChoicesProps } from "../../types/command";
 
-export default class Command extends CommandStructure {
-  constructor(client: DiscordClient) {
-    super(client);
+export default new Command({
+  requirements: { botDeveloper },
+  options: [
+    {
+      name: "command",
+      type: "sub_command",
+      options: [
+        {
+          name: "command_name",
+          type: "string",
+          choices: (() => {
+            let commands: CommandOptionChoicesProps[] = [];
 
-    this.options = [
-      {
-        name: "command",
-        type: "sub_command",
-        options: [
-          {
-            name: "command_name",
-            type: "string",
-            choices: (() => {
-              let commands: ChoicesProps[] = [];
+            var categoryDir = join(__dirname, "..");
+            for (var category of readdirSync(categoryDir))
+              for (var command of readdirSync(join(categoryDir, category))) {
+                let commandName = command.split(".")[0];
+                commands.push({
+                  name: commandName,
+                  value: commandName,
+                });
+              }
 
-              var categoryDir = join(__dirname, "..");
-              for (var category of readdirSync(categoryDir))
-                for (var command of readdirSync(join(categoryDir, category))) {
-                  let commandName = command.split(".")[0];
-                  commands.push({
-                    name: commandName,
-                    value: commandName,
-                  });
-                }
+            return commands.length <= 25 ? commands : undefined;
+          })(),
+          required: true,
+        },
+      ],
+    },
+    {
+      name: "file",
+      type: "sub_command",
+      options: [
+        {
+          name: "file_name",
+          type: "string",
+          required: true,
+        },
+      ],
+    },
+  ],
 
-              return commands.length <= 25 ? commands : undefined;
-            })(),
-            required: true,
-          },
-        ],
-      },
-      {
-        name: "file",
-        type: "sub_command",
-        options: [
-          {
-            name: "file_name",
-            type: "string",
-            required: true,
-          },
-        ],
-      },
-    ];
-  }
-
-  run = async ({ interaction, t }: CommandProps["run"]) => {
+  async run({ interaction, t }) {
     switch (interaction.options.getSubcommand(true)) {
       case "command":
         const command = interaction.options.getString("command_name", true);
 
-        if (!this.client.slashCommands.get(command.toLowerCase()))
+        if (!this.client.getCommand(command.toLowerCase()))
           return await interaction.reply({
             content: t("commands:reload.command.invalid"),
             ephemeral: true,
@@ -102,5 +96,5 @@ export default class Command extends CommandStructure {
         });
         break;
     }
-  };
-}
+  },
+});

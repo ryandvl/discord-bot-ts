@@ -71,6 +71,14 @@ export default {
     description: "Comando de Desenvolvedor",
   },
 
+  testa: {
+    name: "TestA",
+  },
+
+  testb: {
+    name: "TestB",
+  },
+
   reload: {
     name: "reiniciar",
     description: "Comando de Desenvolvedor",

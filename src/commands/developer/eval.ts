@@ -1,20 +1,12 @@
 import { ModalSubmitInteraction } from "discord.js";
-import DiscordClient from "../../DiscordClient";
-import { ModalRow, Embed, Modal, TextInput } from "../../components";
-import CommandStructure, { CommandProps } from "../../controller/Command";
 
-export default class Command extends CommandStructure {
-  constructor(client: DiscordClient) {
-    super(client);
+import { Embed, Modal, ModalRow, TextInput } from "../../components";
+import { Command } from "../../controller";
 
-    this.requirements = {
-      botDeveloper: true,
-    };
-  }
+export default new Command({
+  requirements: { botDeveloper },
 
-  run = async ({ interaction, t }: CommandProps["run"]) => {
-    const client = this.client;
-
+  async run({ interaction, t, client }) {
     await interaction.showModal(
       Modal({
         title: t("commands:eval.modal.title"),
@@ -75,5 +67,5 @@ export default class Command extends CommandStructure {
       ],
       ephemeral: true,
     });
-  };
-}
+  },
+});

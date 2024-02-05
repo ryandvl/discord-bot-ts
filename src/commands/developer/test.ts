@@ -1,26 +1,12 @@
-import DiscordClient from "../../DiscordClient";
-import Pager from "../../components/Pager";
-import CommandStructure, { CommandProps } from "../../controller/Command";
+import { Command } from "../../controller";
 
-export default class Command extends CommandStructure {
-  constructor(client: DiscordClient) {
-    super(client);
+export default new Command({
+  requirements: { botDeveloper },
 
-    this.requirements = {
-      botDeveloper: true,
-    };
-  }
-
-  run = async ({ interaction, t }: CommandProps["run"]) => {
-    let numbers = [];
-
-    for (let i = 1; i <= 100; i++) numbers.push(i.toString());
-
-    new Pager({
-      client: this.client,
-      interaction,
-      translate: t,
-      items: numbers,
+  async run({ interaction }) {
+    await interaction.reply({
+      content: "Test command",
+      ephemeral,
     });
-  };
-}
+  },
+});

@@ -1,20 +1,17 @@
 import {
+  ContextMenuCommandBuilder,
   LocaleString,
-  SlashCommandAttachmentOption,
-  SlashCommandMentionableOption,
-  SlashCommandOptionsOnlyBuilder,
-  SlashCommandSubcommandBuilder,
-  SlashCommandSubcommandGroupBuilder,
-  SlashCommandSubcommandsOnlyBuilder,
+  SlashCommandBuilder,
 } from "discord.js";
 import { readdirSync } from "fs";
 import path from "path";
 
-import CommandStructure, { OptionsProps } from "./Command";
 import { writeEventLine } from "../utils/ConsoleColorful";
 import DiscordClient from "../DiscordClient";
 import config from "../../config";
 import Translator from "./Translator";
+import { CommandOptionsProps } from "../types/command";
+import Command from "./Command";
 
 export const GUILD_EMOJIS = ["1198537913999302758"];
 export const SEPARATORS = {
@@ -63,53 +60,81 @@ export default class Translation {
     }
   }
 
-  setCommandTranslations(command: CommandStructure, category: string) {
-    command.data.setDescription(
-      this.translations["en-US"]["commands"][command.data.name]?.description ??
-        "Invalid Description, Please contact the Bot Developer."
-    );
-
-    for (var locale of this.locales) {
-      var translation =
-        this.translations[locale]?.["commands"]?.[command.data.name];
-
-      //#region Command Name & Description
-      command.data.setNameLocalization(
-        locale,
-        translation?.name ?? command.data.name
+  setCommandTranslations(
+    type: "chatInput" | "contextMenu",
+    command: Command,
+    commandName: string,
+    category: string
+  ) {
+    if (type == "chatInput") {
+      if (!(command.data instanceof SlashCommandBuilder)) return;
+      command.data.setDescription(
+        this.translations["en-US"]["commands"][command.data.name]
+          ?.description ??
+          "Invalid Description, Please contact the Bot Developer."
       );
 
-      var commandDescription = new String() as string;
-      if (config.commandDescription)
-        commandDescription = Translator.setPlaceholder(
-          config.commandDescription,
-          {
-            holders: ["{", "}"],
-            places: {
-              emoji:
-                this.translations[locale]?.["categories"]?.["commands"]?.[
-                  category
-                ].emoji,
-              description: translation?.description,
-              category: category,
-            },
-          }
+      for (var locale of this.locales) {
+        var translation =
+          this.translations[locale]?.["commands"]?.[command.data.name];
+
+        //#region Command Name & Description
+        command.data.setNameLocalization(
+          locale,
+          translation?.name ?? command.data.name
         );
-      else commandDescription = translation?.description;
 
-      command.data.setDescriptionLocalization(
-        locale,
-        translation?.description
-          ? commandDescription
-          : "Invalid Locale Description, Please contact the Bot Developer."
-      );
-      //#endregion
+        var commandDescription = new String() as string;
+        if (config.commandDescription)
+          commandDescription = Translator.setPlaceholder(
+            config.commandDescription,
+            {
+              holders: ["{", "}"],
+              places: {
+                emoji:
+                  this.translations[locale]?.["categories"]?.["commands"]?.[
+                    category
+                  ].emoji,
+                description: translation?.description,
+                category: category,
+              },
+            }
+          );
+        else commandDescription = translation?.description;
+
+        command.data.setDescriptionLocalization(
+          locale,
+          translation?.description
+            ? commandDescription
+            : "Invalid Locale Description, Please contact the Bot Developer."
+        );
+        //#endregion
+      }
+    } else if (type == "contextMenu") {
+      if (!(command.data instanceof ContextMenuCommandBuilder)) return;
+
+      for (var locale of this.locales) {
+        var translation =
+          this.translations[locale]?.["commands"]?.[command.data.name];
+
+        //#region Command Name & Description
+        command.data.setName(
+          this.translations["en-US"]?.["commands"]?.[commandName].name ??
+            commandName
+        );
+
+        command.data.setNameLocalization(
+          locale,
+          translation?.name ?? command.data.name
+        );
+        //#endregion
+      }
     }
   }
 
   setCommandOptionsTranslations(
     commandName: string,
-    option: OptionsProps,
+    option: CommandOptionsProps,
     translatePath: string[]
   ) {
     let newOption: any = {

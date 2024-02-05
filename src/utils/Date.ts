@@ -35,3 +35,23 @@ export function getMinutes(date: Date): string {
 export function getSeconds(date: Date): string {
   return date.getSeconds().toString().padStart(2, "0");
 }
+
+//#region Ms
+
+export function secondsToMs(seconds: number): number {
+  return seconds * 1000;
+}
+
+export function minutesToMs(minutes: number): number {
+  return minutes * 60 * 1000;
+}
+
+export function hoursToMs(hours: number): number {
+  return hours * 60 * 60 * 1000;
+}
+
+export function daysToMs(days: number): number {
+  return days * 24 * 60 * 60 * 1000;
+}
+
+//#endregion

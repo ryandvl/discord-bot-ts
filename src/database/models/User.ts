@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
-import { content } from "../../utils/Database";
-import { ModelsOptionsProps } from "../Manager";
 import { basename } from "path";
+
+import { content } from "../../controller/Database";
+import { ModelsOptionsProps } from "../Manager";
 
 export const modelOption: ModelsOptionsProps[0] = {
   name: basename(__filename).split(".")[0],
